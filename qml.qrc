@@ -1,0 +1,13 @@
+<RCC>
+    <qresource prefix="/">
+        <file>main.qml</file>
+        <file>MissionItemIndexLabel.qml</file>
+        <file>PlanView.qml</file>
+        <file>TraceDisplay.qml</file>
+        <file>PloyLine.qml</file>
+        <file>DataDisplay.qml</file>
+        <file>YawDisplay.qml</file>
+        <file>Pitch_A_Roll.qml</file>
+        <file>ConnectState.qml</file>
+    </qresource>
+</RCC>
