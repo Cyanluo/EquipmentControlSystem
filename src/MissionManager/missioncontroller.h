@@ -5,7 +5,7 @@
 #include <QWidget>
 #include "qmlobjectlistmodel.h"
 #include "ardupilotmega/mavlink.h"
-#include "src/Vehicle/vehicle.h"
+#include "src/vehicle/vehicle.h"
 #include "src/MissionManager/mavmission.h"
 #include "src/MissionManager/missionitem.h"
 #include "QTimer"

@@ -1,6 +1,6 @@
 ﻿#ifndef POLYGONS_H
 #define POLYGONS_H
-#include "QmlObjectListModel.h"
+#include "qmlobjectlistmodel.h"
 #include <QObject>
 #include "missionitem.h"
 #include <src/vehicle/vehicle.h>
