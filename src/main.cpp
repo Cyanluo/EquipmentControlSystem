@@ -2,7 +2,8 @@
 //#include <QApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
-
+#include <QQuickWindow>
+#include <QQuickView>
 #include "drawtrace.h"
 #include "src/MissionManager/polygons.h"
 #include "src/vehicle/vehicle.h"
@@ -39,6 +40,35 @@ int main(int argc, char *argv[])
             QCoreApplication::exit(-1);
     }, Qt::QueuedConnection);
     engine.load(url);
+
+    //全屏显示
+    if (engine.rootObjects().isEmpty())
+        return -1;
+    // 获取根窗口对象
+    QQuickWindow *window = qobject_cast<QQuickWindow *>(engine.rootObjects().at(0));
+    if (!window)
+        return -2;
+    // 设置窗口为全屏
+    window->showMaximized();
+
+//    QQuickView view;
+//    view.setResizeMode(QQuickView::SizeRootObjectToView);
+//    view.setSource(QUrl(QStringLiteral("qrc:/main.qml")));
+
+//    QObject::connect(view.engine(), &QQmlEngine::quit, &app, &QGuiApplication::quit);
+
+//    // 监听窗口大小变化事件
+//    QObject::connect(view.engine(), &QQmlEngine::quit, &app, &QGuiApplication::quit);
+
+//    QObject::connect(&view, &QQuickView::widthChanged, [&view]() {
+//        // 屏幕宽度变化时刷新显示
+//        view.update();
+//    });
+
+//    QObject::connect(&view, &QQuickView::heightChanged, [&view]() {
+//        // 屏幕高度变化时刷新显示
+//        view.update();
+//    });
 
     return app.exec();
 }

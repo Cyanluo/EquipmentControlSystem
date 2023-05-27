@@ -21,6 +21,7 @@ Rectangle {
                 anchors.fill: parent
                 anchors.rightMargin: 5
                 anchors.topMargin: 5
+                anchors.bottomMargin: 10
                 //虚线
                 Row{
                     width:1
@@ -90,6 +91,7 @@ Rectangle {
                 anchors.fill: parent
                 anchors.leftMargin: 5
                 anchors.topMargin: 5
+                anchors.bottomMargin: 10
                 Text {
                     id: rolltitel
                     text: qsTr("滚转角:")

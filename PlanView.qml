@@ -28,6 +28,7 @@ Rectangle {
             anchors.fill: parent
             onClicked: {
                 planview.addindex()
+                myPolygons.getPlanScreenWH(midview.width,midview.height)
                 myPolygons.setIndex(index)
                 myPolygons.setGetx(mouseX)
                 myPolygons.setGety(mouseY)
@@ -36,7 +37,6 @@ Rectangle {
                 exist_a_path = true
                 if(!myPolygons.getisInsert())
                     myPolygons.setMissionitemfocus(index)
-
             }
         }
 
@@ -63,7 +63,6 @@ Rectangle {
                 previousx: model.object.prenumber_x
                 previousy: model.object.prenumber_y
                 count: index
-
             }
         }
         Button{
@@ -92,7 +91,6 @@ Rectangle {
                 }
             }
         }
-
         Rectangle{
             id:userpathbutton
             anchors.bottom: planview.bottom
@@ -107,8 +105,9 @@ Rectangle {
                 onClicked: {
                     if(!exist_a_user_path&&!exist_a_path)
                     {
-                        myPolygons.userDefinemission_s()
-                        index = 48
+                        myPolygons.getPlanScreenWH(midview.width,midview.height)
+                        myPolygons.userDefineMissionSimple()
+                        index = 12
                         exist_a_user_path = true
                         exist_a_path = true
                     }
@@ -148,7 +147,6 @@ Rectangle {
                 }
             }
         }
-
     }
 
     TraceDisplay{
@@ -223,8 +221,8 @@ Rectangle {
         }
         onAccepted: {
             myPolygons.clearmissionlist()
-            myPolygons.userDefinemission_s()
-            index = 48
+            myPolygons.userDefineMissionSimple()
+            index = 12
         }
         onRejected: console.log("Cancel clicked")
     }
@@ -240,8 +238,8 @@ Rectangle {
         onAccepted: console.log("ok clicked")
         onRejected: {
             myPolygons.clearmissionlist()
-            myPolygons.userDefinemission_s()
-            index = 48
+            myPolygons.userDefineMissionSimple()
+            index = 12
         }
     }
     Dialog{
@@ -254,9 +252,5 @@ Rectangle {
         }
         standardButtons: Dialog.Ok
         onAccepted: console.log("ok clicked")
-
-
     }
-
-
 }

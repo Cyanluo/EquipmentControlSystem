@@ -30,6 +30,17 @@ int Polygons::getMissionitemfocus()
 
 }
 
+void Polygons::setPlanScreenW(int W)
+{
+    planScreenW = W;
+    emit PlanScreenWChanged();
+}
+
+void Polygons::setPlanScreenH(int H)
+{
+    planScreenH = H;
+    emit PlanScreenHChanged();
+}
 
 void Polygons::setGetx(int x)
 {
@@ -212,6 +223,129 @@ void Polygons::userDefinemission_s()
     precoordinatex = x;
     precoordinatey = y;
     missionitemfocus = 48;
+}
+
+void Polygons::userDefineMissionSimple()
+{
+    //考虑屏幕大小，在屏幕上显示的位置为:(x,y)*(W,H)/100
+    //在发送给地面站的时候做归一化
+    int x = 13;
+    int y = 80;
+    int prex = x;
+    int prey = y;
+    bool flag = false;
+    //定义第一个点
+    missionitem* mission = new missionitem;
+    mission->setNumber_x(x*planScreenW/100);
+    mission->setNumber_y(y*planScreenH/100);
+    mission->setPrenumber_x(prex*planScreenW/100);
+    mission->setPrenumber_y(prey*planScreenH/100);
+    mission->setMissionindex(1);
+    mission->setfocus(false);
+    _polygons.append(mission);
+    _lineModel.append(mission);
+    for(int index = 2; index <= 8; index++)
+    {
+        //y坐标变化
+        if(index % 2 == 1)
+        {
+            y -= 20;
+        }
+        //x坐标变化
+        if(index % 2 == 0 && flag)
+        {
+            x = 13;
+            flag = false;
+        }
+        else if(index % 2 == 0 && !flag)
+        {
+            x = 85;
+            flag = true;
+        }
+        //存航点
+        missionitem* mission = new missionitem;
+        if(index != 8)
+            mission->setNumber_x(x*planScreenW/100);
+        else
+            mission->setNumber_x((x-5)*planScreenW/100);
+        mission->setNumber_y(y*planScreenH/100);
+        mission->setPrenumber_x(prex*planScreenW/100);
+        mission->setPrenumber_y(prey*planScreenH/100);
+        mission->setMissionindex(index);
+        mission->setfocus(false);
+        _polygons.append(mission);
+        _lineModel.append(mission);
+        if(index != 8)
+            prex = x;
+        else
+            prex = 8;
+        prey = y;
+    }
+
+    //绕一圈
+    x = 8;
+    y = 85;
+    missionitem* mission_1 = new missionitem;
+    mission_1->setNumber_x(x*planScreenW/100);
+    mission_1->setNumber_y(y*planScreenH/100);
+    mission_1->setPrenumber_x(prex*planScreenW/100);
+    mission_1->setPrenumber_y(prey*planScreenH/100);
+    mission_1->setMissionindex(9);
+    mission_1->setfocus(false);
+    _polygons.append(mission_1);
+    _lineModel.append(mission_1);
+    prex = x;
+    prey = y;
+
+    x = 90;
+    y = 85;
+    missionitem* mission_2 = new missionitem;
+    mission_2->setNumber_x(x*planScreenW/100);
+    mission_2->setNumber_y(y*planScreenH/100);
+    mission_2->setPrenumber_x(prex*planScreenW/100);
+    mission_2->setPrenumber_y(prey*planScreenH/100);
+    mission_2->setMissionindex(10);
+    mission_2->setfocus(false);
+    _polygons.append(mission_2);
+    _lineModel.append(mission_2);
+    prex = x;
+    prey = y;
+
+    x = 90;
+    y = 15;
+    missionitem* mission_3 = new missionitem;
+    mission_3->setNumber_x(x*planScreenW/100);
+    mission_3->setNumber_y(y*planScreenH/100);
+    mission_3->setPrenumber_x(prex*planScreenW/100);
+    mission_3->setPrenumber_y(prey*planScreenH/100);
+    mission_3->setMissionindex(11);
+    mission_3->setfocus(false);
+    _polygons.append(mission_3);
+    _lineModel.append(mission_3);
+    prex = x;
+    prey = y;
+
+    x = 8;
+    y = 15;
+    missionitem* mission_4 = new missionitem;
+    mission_4->setNumber_x(x*planScreenW/100);
+    mission_4->setNumber_y(y*planScreenH/100);
+    mission_4->setPrenumber_x(prex*planScreenW/100);
+    mission_4->setPrenumber_y(prey*planScreenH/100);
+    mission_4->setMissionindex(12);
+    mission_4->setfocus(true);
+    _polygons.append(mission_4);
+    _lineModel.append(mission_4);
+
+    precoordinatex = x*planScreenW/100;
+    precoordinatey = y*planScreenH/100;
+    missionitemfocus = 12;
+}
+
+void Polygons::getPlanScreenWH(int W, int H)
+{
+    setPlanScreenH(H);
+    setPlanScreenW(W);
 }
 
 void Polygons::missiondrag(int index,int coordx,int coordy)
