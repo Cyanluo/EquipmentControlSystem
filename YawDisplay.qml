@@ -8,7 +8,8 @@ Rectangle {
     border.color: "#483d8b"
     property real leftdistance: 1000
     property real rightdistance: 1000
-    property real rotangle: activeVehicle.yaw*57.3
+    property real angleOffset:activeVehicle.yawOffset*57.3
+    property real rotangle: activeVehicle.yaw*57.3 -angleOffset
     property bool isadd: true
 
 

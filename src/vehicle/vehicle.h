@@ -22,6 +22,7 @@ public:
     Q_PROPERTY(float pitch        READ getPitch        WRITE setPitch        NOTIFY pitchChanged)
     Q_PROPERTY(float yaw          READ getYaw          WRITE setYaw          NOTIFY yawChanged)
     Q_PROPERTY(float roll         READ getRoll         WRITE setRoll         NOTIFY rollChanged)
+    Q_PROPERTY(float yawOffset    READ getYawOffset    WRITE setYawOffset    NOTIFY yawOffsetChanged)
     Q_PROPERTY(bool  beginConnect READ getBeginConnect WRITE setBeginConnect NOTIFY beginConnectChanged)
     Q_PROPERTY(bool  isConnected  READ getIsConnected  WRITE setIsConnected  NOTIFY isConnectedChanged)
     Q_PROPERTY(int   powerVcc     READ getPowerVcc     WRITE setPowerVcc     NOTIFY powerVccChanged)
@@ -31,6 +32,7 @@ signals:
     void pitchChanged();
     void yawChanged();
     void rollChanged();
+    void yawOffsetChanged();
     void beginConnectChanged();
     void isConnectedChanged();
     void powerVccChanged();
@@ -40,14 +42,16 @@ signals:
 public:
     QTimer *timer         = new QTimer(this);
 
-    float  pitch    = 0;
-    float  yaw      = 0;
-    float  roll     = 0;
-    int    powerVcc = 0;
+    float pitch          = 0;
+    float yaw            = 0;
+    float roll           = 0;
+    int   powerVcc       = 0;
+    float yawOffset      = 0;          //保存第一次偏航数据，所谓偏置角
+    int   heartbeatCount = 0;
 
-    int    heartbeatCount = 0;
-    bool   beginConnect   = false;
-    bool   isConnected    = false;
+    bool  initYawOffset  = true;       //只在第一次收到时赋值
+    bool  beginConnect   = false;
+    bool  isConnected    = false;
 
     GCS_Mavlink* my_mavlink = new GCS_Mavlink;;
 
@@ -64,12 +68,14 @@ private:
     float  getPitch();
     float  getRoll();
     float  getYaw();
+    float  getYawOffset()                            {return yawOffset;   }
     bool   getBeginConnect()                         {return beginConnect;}
     bool   getIsConnected()                          {return isConnected; }
     int    getPowerVcc()                             {return powerVcc;    }
     void   setPitch(float x);
     void   setYaw(float x);
     void   setRoll(float x);
+    void   setYawOffset(float x);
     void   setBeginConnect(bool x);
     void   setIsConnected(bool x);
     void   setPowerVcc(int pv);

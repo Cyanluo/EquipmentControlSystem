@@ -65,6 +65,11 @@ void Vehicle::handleAttitude(mavlink_message_t msg)
     setYaw(attitude.yaw);
     setRoll(attitude.roll);
     //qDebug()<<attitude.pitch<<"//"<<attitude.yaw<<"//"<<attitude.roll;
+    if(initYawOffset){
+        setYawOffset(attitude.yaw);
+        initYawOffset = false;
+    }
+
 }
 
 void Vehicle::handlePowerStatus(mavlink_message_t msg)
@@ -176,6 +181,12 @@ void Vehicle::setRoll(float x)
 {
     roll = x;
     emit rollChanged();
+}
+
+void Vehicle::setYawOffset(float x)
+{
+    yawOffset = x;
+    emit yawOffsetChanged();
 }
 
 void Vehicle::setBeginConnect(bool x)
