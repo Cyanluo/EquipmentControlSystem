@@ -8,6 +8,8 @@ Rectangle {
     property real index: 0
     property bool exist_a_user_path: false
     property bool exist_a_path: false
+    property bool afterReadWP: false
+
 
     Rectangle{
         id:planview
@@ -24,9 +26,17 @@ Rectangle {
             index = index + 1
         }
 
+
+
         MouseArea{
             anchors.fill: parent
             onClicked: {
+                if(afterReadWP)
+                {
+                    //读当前的航点index
+                    index = myPolygons.getNowIndex()
+                    afterReadWP = false
+                }
                 planview.addindex()
                 myPolygons.getPlanScreenWH(midview.width,midview.height)
                 myPolygons.setIndex(index)
@@ -69,8 +79,16 @@ Rectangle {
             id:uplaodbutton
             anchors.bottom: planview.bottom
             anchors.right: planview.right
-            text: "上传数据"
+            text: "写入航点"
             onClicked: uplaoddialog.open()
+        }
+        Button{
+            id:readbutton
+            anchors.bottom: planview.bottom
+            anchors.right: uplaodbutton.left
+            anchors.rightMargin: 2
+            text: "读取航点"
+            onClicked: readdialog.open()
         }
         Rectangle{
             id:clearbutton
@@ -206,6 +224,19 @@ Rectangle {
         onAccepted:
         {
             missioncontroller.sendToVehicle()
+            console.log("Ok clicked")
+        }
+        onRejected: console.log("Cancel clicked")
+    }
+    Dialog {
+        id: readdialog
+        anchors.centerIn: parent
+        title: "Do you want to read from vehicle?"
+        standardButtons: Dialog.Ok | Dialog.Cancel
+        onAccepted:
+        {
+            missioncontroller.loadFromVehicle()
+            afterReadWP = true
             console.log("Ok clicked")
         }
         onRejected: console.log("Cancel clicked")

@@ -49,7 +49,8 @@ public:
     float yawOffset      = 0;          //保存第一次偏航数据，所谓偏置角
     int   heartbeatCount = 0;
 
-    bool  initYawOffset  = true;       //只在第一次收到时赋值
+    bool  initYawOffset  = true;       //在第一次收到yaw值时赋值
+    bool  reconnect      = false;      //在重新连接时更新yaw offset
     bool  beginConnect   = false;
     bool  isConnected    = false;
 

@@ -65,9 +65,10 @@ void Vehicle::handleAttitude(mavlink_message_t msg)
     setYaw(attitude.yaw);
     setRoll(attitude.roll);
     //qDebug()<<attitude.pitch<<"//"<<attitude.yaw<<"//"<<attitude.roll;
-    if(initYawOffset){
+    if(initYawOffset || reconnect){
         setYawOffset(attitude.yaw);
         initYawOffset = false;
+        reconnect = false;
     }
 
 }
@@ -145,7 +146,13 @@ void Vehicle::arduDisconnect()
     timer->stop();
     setBeginConnect(false);
     setIsConnected(false);
+    reconnect = true;
     heartbeatCount = 0;
+
+    //重置roll，yaw，picth
+    setRoll(0);
+    setPitch(0);
+    setYaw(yawOffset);
     //qDebug()<<"disconnect";
 }
 

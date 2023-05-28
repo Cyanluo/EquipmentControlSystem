@@ -21,9 +21,11 @@ int main(int argc, char *argv[])
 
 
     MissionController::missionlist = polygons.polygons();
+    Polygons::readMissionItem = missioncontroller.getMavMission();
 
+    QObject::connect(&missioncontroller,&MissionController::readComplete,&polygons,&Polygons::convertToMissonitem);
 
-    qmlRegisterUncreatableType<Polygons>("Object",1,0,"Polygons","Reference only");
+    qmlRegisterType<Polygons>("Poj",1,0,"Polygons");
     qmlRegisterUncreatableType<Vehicle>("Object",1,0,"Vehicle","Reference only");
     qmlRegisterUncreatableType<MissionController>("Object",1,0,"MissionController","Reference only");
     qmlRegisterType<DrawTrace>("setcd",1,0,"SettingCoordinate");

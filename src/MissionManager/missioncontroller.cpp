@@ -11,6 +11,61 @@ MissionController::MissionController(Vehicle* vehicle)
     connect(_ackTimeoutTimer,&QTimer::timeout,this,&MissionController::_ackTimeout);
 }
 
+void MissionController::loadFromVehicle()
+{
+    //需要判断车辆是否在线，与飞控是否有连接
+    connectToMavlink();
+    _requestList();
+}
+
+void MissionController::_requestList()
+{
+    _itemIndicesToRead.clear();
+    _clearAndDeleteMissionItems();
+    mavlink_message_t       message;
+    mavlink_msg_mission_request_list_pack_chan(1,//system id
+                                               1,//component id
+                                               1,//chan
+                                               &message,//encode的一帧mavlink消息
+                                               1,//目标system id
+                                               MAV_COMP_ID_AUTOPILOT1,
+                                               mission_type);
+    uint8_t buff[MAVLINK_MAX_PACKET_LEN];
+    int len = mavlink_msg_to_send_buffer(buff, &message);
+    _vehicle->my_mavlink->_mavprotocol->_seriallink->sendMavlinkMessage((const char*)buff, len);
+
+}
+
+void MissionController::_readTransactionComplete()
+{
+    qDebug()<<"_readTransactionComplete";
+    mavlink_message_t       message;
+
+    mavlink_msg_mission_ack_pack_chan(1,
+                                      1,
+                                      1,
+                                      &message,
+                                      1,
+                                      MAV_COMP_ID_AUTOPILOT1,
+                                      MAV_MISSION_ACCEPTED,
+                                      mission_type);
+    uint8_t buff[MAVLINK_MAX_PACKET_LEN];
+    int len = mavlink_msg_to_send_buffer(buff, &message);
+    _vehicle->my_mavlink->_mavprotocol->_seriallink->sendMavlinkMessage((const char*)buff, len);
+
+    disConnectFromMavlink();
+    emit readComplete();
+}
+
+void MissionController::_clearAndDeleteMissionItems(void)
+{
+    for (int i=0; i<_missionItems.count(); i++) {
+        // Using deleteLater here causes too much transient memory to stack up
+        delete _missionItems[i];
+    }
+    _missionItems.clear();
+}
+
 void MissionController::sendToVehicle()
 {
     /***
@@ -93,7 +148,7 @@ void MissionController::initMavmission(QmlObjectListModel *MissionItems)
         mavMission->setParam3(1);
         mavMission->setParam4(0);
         mavMission->setParam5(missionItem->getNumber_x());
-        mavMission->setParam6(missionItem->getNumber_x());
+        mavMission->setParam6(missionItem->getNumber_y());
         mavMission->setParam7(0);
         mavMission->setSequenceNumber(missionItem->getMissionindex());
         _writeMissionItems.append(mavMission);
@@ -150,11 +205,120 @@ void MissionController::_handleMissionRequest(mavlink_message_t message, bool mi
                                        item->param7(),
                                        mission_type);
 
+    //qDebug()<<"x:"<<item->param5()<<"y:"<<item->param6(); //这里发送的数据是对的
     uint8_t buff[MAVLINK_MAX_PACKET_LEN];
     int len = mavlink_msg_to_send_buffer(buff, &messageOut);
     _vehicle->my_mavlink->_mavprotocol->_seriallink->sendMavlinkMessage((const char*)buff, len);
 
     _startMissionTimeout(AckMissionRequest);
+}
+
+void MissionController::_handleMissionCount(mavlink_message_t message)
+{
+    mavlink_mission_count_t missionCount;
+
+    mavlink_msg_mission_count_decode(&message, &missionCount);
+
+    if (missionCount.mission_type != mission_type) {
+        // if there was a previous transaction with a different mission_type, it can happen that we receive
+        // a stale message here, for example when the MAV ran into a timeout and sent a message twice
+        qDebug() << "_handleMissionCount Incorrect mission_type received expected";
+        return;
+    }
+    // Prime read list
+    for (int i=0; i<missionCount.count; i++) {
+        _itemIndicesToRead << i;
+    }
+    _missionItemCountToRead = missionCount.count;
+    _requestNextMissionItem();
+}
+
+void MissionController::_requestNextMissionItem()
+{
+    mavlink_message_t       message;
+    mavlink_msg_mission_request_int_pack_chan(1,
+                                              1,
+                                              1,
+                                              &message,
+                                              1,
+                                              MAV_COMP_ID_AUTOPILOT1,
+                                              _itemIndicesToRead[0],
+                                              mission_type);
+    uint8_t buff[MAVLINK_MAX_PACKET_LEN];
+    int len = mavlink_msg_to_send_buffer(buff, &message);
+    _vehicle->my_mavlink->_mavprotocol->_seriallink->sendMavlinkMessage((const char*)buff, len);
+}
+
+void MissionController::_handleMissionItem(const mavlink_message_t &message, bool missionItemInt)
+{
+    MAV_CMD     command;
+    MAV_FRAME   frame;
+    double      param1;
+    double      param2;
+    double      param3;
+    double      param4;
+    double      param5;
+    double      param6;
+    double      param7;
+    bool        autoContinue;
+    int         seq;
+
+    if (missionItemInt) {
+        mavlink_mission_item_int_t missionItem;
+        mavlink_msg_mission_item_int_decode(&message, &missionItem);
+
+        command =       (MAV_CMD)missionItem.command,
+        frame =         (MAV_FRAME)missionItem.frame,
+        param1 =        missionItem.param1;
+        param2 =        missionItem.param2;
+        param3 =        missionItem.param3;
+        param4 =        missionItem.param4;
+        param5 =        missionItem.frame == MAV_FRAME_MISSION ? (double)missionItem.x : (double)missionItem.x;// * 1e-7;
+        param6 =        missionItem.frame == MAV_FRAME_MISSION ? (double)missionItem.y : (double)missionItem.y;// * 1e-7;
+        //qDebug()<<"in handle missionitem"<<missionItem.x<<"\\"<<missionItem.y;
+        param7 =        (double)missionItem.z;
+        autoContinue =  missionItem.autocontinue;
+        seq =           missionItem.seq;
+        qDebug()<<"int";
+    } else {
+        mavlink_mission_item_t missionItem;
+        mavlink_msg_mission_item_decode(&message, &missionItem);
+
+        command =       (MAV_CMD)missionItem.command,
+        frame =         (MAV_FRAME)missionItem.frame,
+        param1 =        missionItem.param1;
+        param2 =        missionItem.param2;
+        param3 =        missionItem.param3;
+        param4 =        missionItem.param4;
+        param5 =        missionItem.x;
+        param6 =        missionItem.y;
+        param7 =        missionItem.z;
+        autoContinue =  missionItem.autocontinue;
+        seq =           missionItem.seq;
+    }
+
+    if (_itemIndicesToRead.contains(seq)) {
+        _itemIndicesToRead.removeOne(seq);
+        MavMission* item = new MavMission;
+        item->setParam1(param1);
+        item->setParam2(param2);
+        item->setParam3(param3);
+        item->setParam4(param4);
+        item->setParam5(param5);
+        item->setParam6(param6);
+        item->setParam7(param7);
+        item->setCommand(command);
+        item->setFrame(frame);
+        item->setAutoContinue(autoContinue);
+        item->setSequenceNumber(seq);
+        _missionItems.append(item);
+    }
+
+    if (_itemIndicesToRead.count() == 0) {
+        _readTransactionComplete();
+    } else {
+        _requestNextMissionItem();
+    }
 }
 
 void MissionController::_handleMissionAck(const mavlink_message_t &message)
@@ -243,6 +407,8 @@ void MissionController::_startMissionTimeout(AckType_t ack)
     _ackTimeoutTimer->start();
 }
 
+
+
 void MissionController::_ackTimeout()
 {
     _ackTimeoutTimer->stop();
@@ -263,15 +429,15 @@ void MissionController::_mavlinkMessageReceived(const mavlink_message_t &msg)
 {
     switch (msg.msgid) {
     case MAVLINK_MSG_ID_MISSION_COUNT:
-        //_handleMissionCount(message);
+        _handleMissionCount(msg);
         break;
 
     case MAVLINK_MSG_ID_MISSION_ITEM:
-        //_handleMissionItem(message, false /* missionItemInt */);
+        _handleMissionItem(msg, false /* missionItemInt */);
         break;
 
     case MAVLINK_MSG_ID_MISSION_ITEM_INT:
-        //_handleMissionItem(message, true /* missionItemInt */);
+        _handleMissionItem(msg, true /* missionItemInt */);
         break;
 
     case MAVLINK_MSG_ID_MISSION_REQUEST:

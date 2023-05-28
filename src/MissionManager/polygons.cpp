@@ -1,7 +1,8 @@
 ﻿#include "polygons.h"
 #include <QDebug>
+#include "src/MissionManager/missioncontroller.h"
 
-
+QList<MavMission*>* Polygons::readMissionItem = nullptr;
 
 Polygons::Polygons(QObject *parent) : QObject(parent)
 {
@@ -575,6 +576,59 @@ void Polygons::insertmissionitem()
     //
     emit _lineModel.dataChanged(_lineModel.index(missionitemfocus-1), _lineModel.index(missionitemfocus-1));
     emit _lineModel.dataChanged(_lineModel.index(missionitemfocus), _lineModel.index(missionitemfocus));
+
+}
+
+void Polygons::convertToMissonitem()
+{
+    qDebug()<<"convert to missionitem: "<<readMissionItem->count();
+    //清除原有的任务点
+    _polygons.clear();
+    _lineModel.clear();
+    isInsert = false;
+    //还没写好，在重新规划行航点时会崩溃
+    //需要再看一下行航点显示逻辑
+
+    int prenumber_x = 0;
+    int prenumber_y = 0;
+    for(int index = 0; index < readMissionItem->count(); index++)
+    {
+        MavMission* mavItem = (*readMissionItem)[index];
+        missionitem* missionItem = new missionitem;
+        missionItem->setMissionindex(mavItem->sequenceNumber()+1);
+        missionItem->setNumber_x(mavItem->param5());
+        missionItem->setNumber_y(mavItem->param6());
+        qDebug()<<"x:"<<mavItem->param5();
+        qDebug()<<"y:"<<mavItem->param6();
+
+        //第一个点的pre xy等于自己的xy
+        if(index == 0){
+            missionItem->setPrenumber_x(mavItem->param5());
+            missionItem->setPrenumber_y(mavItem->param6());
+        }
+        else{
+            missionItem->setPrenumber_x(prenumber_x);
+            missionItem->setPrenumber_y(prenumber_y);
+        }
+
+        prenumber_x = mavItem->param5();    //记录前一个点的xy坐标
+        prenumber_y = mavItem->param6();
+
+        //最后一个点聚焦
+        if(index == readMissionItem->count()-1)
+            missionItem->setfocus(true);
+        else
+            missionItem->setfocus(false);
+        //加入航点
+        _polygons.append(missionItem);
+        _lineModel.append(missionItem);
+    }
+
+    //读完之后更新index，foucus等
+    missionitemfocus = readMissionItem->count();
+    index = readMissionItem->count();
+    currentEditItemIndex = readMissionItem->count();
+    setprecoordinate(prenumber_x,prenumber_y);
 
 }
 

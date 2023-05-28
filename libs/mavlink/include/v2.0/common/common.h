@@ -10,7 +10,7 @@
     #error Wrong include order: MAVLINK_COMMON.H MUST NOT BE DIRECTLY USED. Include mavlink.h from the same directory instead or set ALL AND EVERY defines from MAVLINK.H manually accordingly, including the #define MAVLINK_H call.
 #endif
 
-#define MAVLINK_COMMON_XML_HASH -1426341605425150972
+#define MAVLINK_COMMON_XML_HASH 6736073062142212177
 
 #ifdef __cplusplus
 extern "C" {
@@ -842,6 +842,7 @@ typedef enum MAV_MISSION_TYPE
    MAV_MISSION_TYPE_MISSION=0, /* Items are mission commands for main mission. | */
    MAV_MISSION_TYPE_FENCE=1, /* Specifies GeoFence area(s). Items are MAV_CMD_NAV_FENCE_ GeoFence items. | */
    MAV_MISSION_TYPE_RALLY=2, /* Specifies the rally points for the vehicle. Rally points are alternative RTL points. Items are MAV_CMD_NAV_RALLY_POINT rally point items. | */
+   MAV_MISSION_TYPE_ROBOTARMWP=3, /* Specifies the robot arm waypoints for the vehicle's arm. Robot arm waypoints are the trajectory used for the movement of the arm. Items are MAV_CMD_NAV_ROBOTARM_POINT rally point items. | */
    MAV_MISSION_TYPE_ALL=255, /* Only used in MISSION_CLEAR_ALL to clear all mission types. | */
    MAV_MISSION_TYPE_ENUM_END=256, /*  | */
 } MAV_MISSION_TYPE;

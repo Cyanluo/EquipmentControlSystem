@@ -2,7 +2,8 @@
 #define POLYGONS_H
 #include "qmlobjectlistmodel.h"
 #include <QObject>
-#include "missionitem.h"
+#include "src/MissionManager/missionitem.h"
+#include "src/MissionManager/mavmission.h"
 #include <src/vehicle/vehicle.h>
 
 class Polygons :public QObject
@@ -45,12 +46,14 @@ public:
     Q_INVOKABLE void missiondel();                     //删除某一任务点
     Q_INVOKABLE void setisInsert(bool T);
     Q_INVOKABLE bool getisInsert();
+    Q_INVOKABLE int  getNowIndex()          {return index;}
 
     Q_INVOKABLE void senddata();
 
 
     QmlObjectListModel* polygons(void)  { return &_polygons;  }
     QmlObjectListModel* lineModel(void) { return &_lineModel; }
+    static QList<MavMission*>* readMissionItem;
     bool isInsert = false;             //下一步是否为插入点
     bool exist_a_path = false;         //页面是否已有路径
 
@@ -69,6 +72,7 @@ signals:
 public slots:
     void addmissionitem();
     void insertmissionitem();
+    void convertToMissonitem();
 
 private:
     int count;
