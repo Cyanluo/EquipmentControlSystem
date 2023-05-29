@@ -144,8 +144,8 @@ void MissionController::initMavmission(QmlObjectListModel *MissionItems)
         mavMission->setFrame(MAV_FRAME_BODY_FRD);
         mavMission->setAutoContinue(true);
         mavMission->setCommand(MAV_CMD_NAV_ROBOTARM_POINT);
-        mavMission->setParam1(missionItem->getNumber_x()/Polygons::planScreenW);
-        mavMission->setParam2(missionItem->getNumber_y()/Polygons::planScreenH);
+        mavMission->setParam1((double)missionItem->getNumber_x()/(double)Polygons::planScreenW);
+        mavMission->setParam2((double)missionItem->getNumber_y()/(double)Polygons::planScreenH);
         mavMission->setParam3(1);
         mavMission->setParam4(0);
         mavMission->setParam5(0);

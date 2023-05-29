@@ -32,7 +32,7 @@ public:
     double          param3          (void) const { return _param3; }
     double          param4          (void) const { return _param4; }
     double          param5          (void) const { return _param5; }
-    double          param6          (void) const { return _param6;}
+    double          param6          (void) const { return _param6; }
     double          param7          (void) const { return _param7; }
 
 private:
@@ -44,8 +44,8 @@ private:
     double          _param2;
     double          _param3;
     double          _param4;
-    double          _param5 = 150;
-    double          _param6 = 150;
+    double          _param5;
+    double          _param6;
     double          _param7;
 
 signals:
