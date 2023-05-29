@@ -4,6 +4,9 @@
 
 QList<MavMission*>* Polygons::readMissionItem = nullptr;
 
+int Polygons::planScreenW = 0;
+int Polygons::planScreenH = 0;
+
 Polygons::Polygons(QObject *parent) : QObject(parent)
 {
     connect(this,&Polygons::addItem,this,&Polygons::addmissionitem);

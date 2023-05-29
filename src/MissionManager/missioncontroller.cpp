@@ -1,5 +1,6 @@
 ﻿#include "missioncontroller.h"
 #include <QDebug>
+#include "src/MissionManager/polygons.h"
 
 QmlObjectListModel* MissionController::missionlist = nullptr;
 
@@ -140,11 +141,11 @@ void MissionController::initMavmission(QmlObjectListModel *MissionItems)
     {
         missionitem* missionItem = qobject_cast<missionitem*>(MissionItems->get(seqNum));
         MavMission* mavMission = new MavMission;
-        mavMission->setFrame(MAV_FRAME_GLOBAL);
+        mavMission->setFrame(MAV_FRAME_BODY_FRD);
         mavMission->setAutoContinue(true);
         mavMission->setCommand(MAV_CMD_NAV_ROBOTARM_POINT);
-        mavMission->setParam1(missionItem->getNumber_x());
-        mavMission->setParam2(missionItem->getNumber_y());
+        mavMission->setParam1(missionItem->getNumber_x()/Polygons::planScreenW);
+        mavMission->setParam2(missionItem->getNumber_y()/Polygons::planScreenH);
         mavMission->setParam3(1);
         mavMission->setParam4(0);
         mavMission->setParam5(0);
@@ -206,7 +207,7 @@ void MissionController::_handleMissionRequest(mavlink_message_t message, bool mi
                                        item->param7(),
                                        mission_type);
 
-    //qDebug()<<"x:"<<item->param5()<<"y:"<<item->param6(); //这里发送的数据是对的
+    qDebug()<<"x:"<<item->param1()<<"y:"<<item->param2(); //这里发送的数据是对的
     uint8_t buff[MAVLINK_MAX_PACKET_LEN];
     int len = mavlink_msg_to_send_buffer(buff, &messageOut);
     _vehicle->my_mavlink->_mavprotocol->_seriallink->sendMavlinkMessage((const char*)buff, len);
@@ -357,8 +358,8 @@ void MissionController::_handleMissionAck(const mavlink_message_t &message)
             if(missionAck.type == MAV_MISSION_INVALID_SEQUENCE)
                 qDebug()<<"MAV_MISSION_INVALID_SEQUENCE";
 
-                qDebug()<<"mission err type:"<<missionAck.type;
-                qDebug()<<"mission err mission type:"<<missionAck.mission_type;
+            qDebug()<<"mission err type:"<<missionAck.type;
+            qDebug()<<"mission err mission type:"<<missionAck.mission_type;
 
             _finishedTransmit(false);
         }
@@ -429,6 +430,7 @@ void MissionController::_ackTimeout()
     case AckMissionRequest:
         // MISSION_REQUEST is expected, or MISSION_ACK to end sequence
         _finishedTransmit(false);
+        qDebug()<<"_ackTimeout:AckMissionRequest";
         break;
     case AckMissionClearAll:
         // MISSION_ACK expected

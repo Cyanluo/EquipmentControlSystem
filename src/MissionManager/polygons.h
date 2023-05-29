@@ -56,6 +56,8 @@ public:
     static QList<MavMission*>* readMissionItem;
     bool isInsert = false;             //下一步是否为插入点
     bool exist_a_path = false;         //页面是否已有路径
+    static int planScreenW;           //记录当前的plan屏幕的宽度
+    static int planScreenH;           //记录当前的plan屏幕的高度
 
 signals:
     void getxChanged();
@@ -83,8 +85,7 @@ private:
     int precoordinatex;      //画线操作的前一点数据
     int precoordinatey;
     int currentEditItemIndex = 0;     //记录当前编辑的是哪一项
-    int planScreenW = 0;           //记录当前的plan屏幕的宽度
-    int planScreenH = 0;           //记录当前的plan屏幕的高度
+
 
     QmlObjectListModel  _polygons;
     QmlObjectListModel  _lineModel;
