@@ -599,23 +599,23 @@ void Polygons::convertToMissonitem()
         MavMission* mavItem = (*readMissionItem)[index];
         missionitem* missionItem = new missionitem;
         missionItem->setMissionindex(mavItem->sequenceNumber()+1);
-        missionItem->setNumber_x(mavItem->param5());
-        missionItem->setNumber_y(mavItem->param6());
-        qDebug()<<"x:"<<mavItem->param5();
-        qDebug()<<"y:"<<mavItem->param6();
+        missionItem->setNumber_x((int)(mavItem->param1() * planScreenW));
+        missionItem->setNumber_y((int)(mavItem->param2() * planScreenH));
+        qDebug()<<"x:"<<mavItem->param1();
+        qDebug()<<"y:"<<mavItem->param2();
 
         //第一个点的pre xy等于自己的xy
         if(index == 0){
-            missionItem->setPrenumber_x(mavItem->param5());
-            missionItem->setPrenumber_y(mavItem->param6());
+            missionItem->setPrenumber_x((int)(mavItem->param1() * planScreenW));
+            missionItem->setPrenumber_y((int)(mavItem->param2() * planScreenH));
         }
         else{
             missionItem->setPrenumber_x(prenumber_x);
             missionItem->setPrenumber_y(prenumber_y);
         }
 
-        prenumber_x = mavItem->param5();    //记录前一个点的xy坐标
-        prenumber_y = mavItem->param6();
+        prenumber_x = (int)(mavItem->param1() * planScreenW);    //记录前一个点的xy坐标
+        prenumber_y = (int)(mavItem->param2() * planScreenH);
 
         //最后一个点聚焦
         if(index == readMissionItem->count()-1)

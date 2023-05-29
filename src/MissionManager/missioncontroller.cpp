@@ -275,8 +275,8 @@ void MissionController::_handleMissionItem(const mavlink_message_t &message, boo
         param2 =        missionItem.param2;
         param3 =        missionItem.param3;
         param4 =        missionItem.param4;
-        param5 =        missionItem.frame == MAV_FRAME_MISSION ? (double)missionItem.x : (double)missionItem.x;// * 1e-7;
-        param6 =        missionItem.frame == MAV_FRAME_MISSION ? (double)missionItem.y : (double)missionItem.y;// * 1e-7;
+        param5 =        missionItem.x;
+        param6 =        missionItem.y;
         //qDebug()<<"in handle missionitem"<<missionItem.x<<"\\"<<missionItem.y;
         param7 =        (double)missionItem.z;
         autoContinue =  missionItem.autocontinue;
