@@ -142,14 +142,15 @@ void MissionController::initMavmission(QmlObjectListModel *MissionItems)
         MavMission* mavMission = new MavMission;
         mavMission->setFrame(MAV_FRAME_GLOBAL);
         mavMission->setAutoContinue(true);
-        mavMission->setCommand(MAV_CMD_NAV_WAYPOINT);
-        mavMission->setParam1(0);
-        mavMission->setParam2(1);
+        mavMission->setCommand(MAV_CMD_NAV_ROBOTARM_POINT);
+        mavMission->setParam1(missionItem->getNumber_x());
+        mavMission->setParam2(missionItem->getNumber_y());
         mavMission->setParam3(1);
         mavMission->setParam4(0);
-        mavMission->setParam5(missionItem->getNumber_x());
-        mavMission->setParam6(missionItem->getNumber_y());
+        mavMission->setParam5(0);
+        mavMission->setParam6(0);
         mavMission->setParam7(0);
+
         mavMission->setSequenceNumber(missionItem->getMissionindex());
         _writeMissionItems.append(mavMission);
     }
@@ -158,7 +159,7 @@ void MissionController::initMavmission(QmlObjectListModel *MissionItems)
 void MissionController::_handleMissionRequest(mavlink_message_t message, bool missionItemInt)
 {
     MAV_MISSION_TYPE missionRequestMissionType;
-    uint16_t            missionRequestSeq;
+    uint16_t         missionRequestSeq;
 
     //判断请求任务项类型
     if (missionItemInt) {
@@ -349,6 +350,16 @@ void MissionController::_handleMissionAck(const mavlink_message_t &message)
             _finishedTransmit(true);
         }
         else{
+            if(missionAck.type == MAV_MISSION_ERROR)
+                qDebug()<<"MAV_MISSION_ERROR";
+            if(missionAck.type == MAV_MISSION_DENIED)
+                qDebug()<<"MAV_MISSION_DENIED";
+            if(missionAck.type == MAV_MISSION_INVALID_SEQUENCE)
+                qDebug()<<"MAV_MISSION_INVALID_SEQUENCE";
+
+                qDebug()<<"mission err type:"<<missionAck.type;
+                qDebug()<<"mission err mission type:"<<missionAck.mission_type;
+
             _finishedTransmit(false);
         }
         break;

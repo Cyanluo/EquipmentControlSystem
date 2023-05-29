@@ -100,7 +100,7 @@ Rectangle {
             Button{
                 anchors.fill: parent
                 anchors.leftMargin: 2
-                text: "clear"
+                text: "清除航点"
                 onClicked: {
                     myPolygons.clearmissionlist()
                     exist_a_path = false

@@ -29,17 +29,17 @@ public:
     } AckType_t;
 
     //界面的上传航点按钮对应
-    Q_INVOKABLE void sendToVehicle(void);
-    Q_INVOKABLE void loadFromVehicle();                //读取飞控航点数据
+    Q_INVOKABLE void            sendToVehicle(void);
+    Q_INVOKABLE void            loadFromVehicle();                //读取飞控航点数据
     //将polygons的航点数据传给misssioncontroller，类似于拷贝一份
-    static QmlObjectListModel* missionlist;
+    static QmlObjectListModel*  missionlist;
 
-    QList<MavMission*>* getMavMission(void)          {return &_missionItems;}
+    QList<MavMission*>*         getMavMission(void)          {return &_missionItems;}
     //static GCS_Mavlink *my_mavlink;
 
 private:
-    int _lastMissionRequestSeq;         //记录最新的任务请求序号
-    QTimer*     _ackTimeoutTimer = nullptr;
+    int                         _lastMissionRequestSeq;         //记录最新的任务请求序号
+    QTimer*                     _ackTimeoutTimer = nullptr;
 
 
 private:
@@ -60,25 +60,25 @@ private:
     void _readTransactionComplete();
 
 
-    MAV_MISSION_TYPE mission_type = MAV_MISSION_TYPE_MISSION;
+    MAV_MISSION_TYPE    mission_type = MAV_MISSION_TYPE_ROBOTARMWP;
 
-    Vehicle* _vehicle = nullptr;
-    QList<MavMission*> _writeMissionItems;     //存储要发给飞控的任务点数据
-    QList<MavMission*> _missionItems;          //存储从飞控读取的任务点数据
+    Vehicle*            _vehicle = nullptr;
+    QList<MavMission*>  _writeMissionItems;     //存储要发给飞控的任务点数据
+    QList<MavMission*>  _missionItems;          //存储从飞控读取的任务点数据
 
-    AckType_t _expectedAck = AckNone;          //当前是响应哪一类信号，即地面站期望的响应类型
+    AckType_t           _expectedAck = AckNone;          //当前是响应哪一类信号，即地面站期望的响应类型
 
 protected:
     QList<int>          _itemIndicesToRead;
     int                 _missionItemCountToRead;  // Count of all mission items to read
-    void _clearAndDeleteMissionItems(void);
+    void                _clearAndDeleteMissionItems(void);
 
 signals:
-    void readComplete();
+    void                readComplete();
 
 private slots:
-    void _mavlinkMessageReceived(const mavlink_message_t &msg);
-    void _ackTimeout(void);
+    void                _mavlinkMessageReceived(const mavlink_message_t &msg);
+    void                _ackTimeout(void);
 };
 
 

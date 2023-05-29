@@ -37,7 +37,7 @@ public:
     Q_INVOKABLE void setGety(int x);
     Q_INVOKABLE void setIndex(int x);
     Q_INVOKABLE void setMissionitemfocus(int x);      //设置当前的聚焦任务点
-    Q_INVOKABLE void setprecoordinate(int x,int y);   //存入前一点的坐标 note:前一点坐标实现由滞后设置实现
+    Q_INVOKABLE void setprecoordinate(int x,int y);   //存入前一点的坐标
     Q_INVOKABLE void clearmissionlist();              //清除任务点
     Q_INVOKABLE void userDefinemission_s();           //自定义任务1--s型
     Q_INVOKABLE void userDefineMissionSimple();           //自定义任务1--简单s型
