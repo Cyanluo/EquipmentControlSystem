@@ -235,6 +235,8 @@ Rectangle {
         standardButtons: Dialog.Ok | Dialog.Cancel
         onAccepted:
         {
+            exist_a_path = true
+            myPolygons.getPlanScreenWH(midview.width,midview.height);
             missioncontroller.loadFromVehicle()
             afterReadWP = true
             console.log("Ok clicked")

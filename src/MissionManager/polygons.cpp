@@ -118,6 +118,7 @@ void Polygons::clearmissionlist()
     _polygons.clear();
     _lineModel.clear();
     isInsert = false;
+    index = 0;
 }
 
 void Polygons::userDefinemission_s()
@@ -344,6 +345,7 @@ void Polygons::userDefineMissionSimple()
     precoordinatex = x*planScreenW/100;
     precoordinatey = y*planScreenH/100;
     missionitemfocus = 12;
+    index = 12;
 }
 
 void Polygons::getPlanScreenWH(int W, int H)
