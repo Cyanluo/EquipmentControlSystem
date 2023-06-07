@@ -9,5 +9,6 @@
         <file>YawDisplay.qml</file>
         <file>Pitch_A_Roll.qml</file>
         <file>ConnectState.qml</file>
+        <file>qml/toolbar/NetTool.qml</file>
     </qresource>
 </RCC>

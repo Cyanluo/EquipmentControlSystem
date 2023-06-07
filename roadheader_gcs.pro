@@ -17,6 +17,7 @@ SOURCES += \
         src/MissionManager/qmlobjectlistmodel.cpp \
         src/drawtrace.cpp \
         src/gcs_mavlink/MAVLinkProtocol.cpp \
+        src/gcs_mavlink/NetworkUDP.cpp \
         src/gcs_mavlink/gcs_mavlink.cpp \
         src/gcs_mavlink/seriallink.cpp \
         src/main.cpp \
@@ -46,6 +47,7 @@ HEADERS += \
     src/MissionManager/qmlobjectlistmodel.h \
     src/drawtrace.h \
     src/gcs_mavlink/MAVLinkProtocol.h \
+    src/gcs_mavlink/NetworkUDP.h \
     src/gcs_mavlink/gcs_mavlink.h \
     src/gcs_mavlink/seriallink.h \
     src/mainwindow.h \

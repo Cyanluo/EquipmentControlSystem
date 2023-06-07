@@ -4,7 +4,7 @@ import QtLocation 5.6
 import QtPositioning 5.6
 import QtQuick.Controls 2.0
 import QtQuick.Controls 2.15
-
+import "./qml/toolbar"
 import setcd 1.0
 
 Window {
@@ -71,8 +71,12 @@ Window {
                 font.pixelSize: 50
                 color: "white"
             }
-
-
+        }
+        NetTool{
+            width: 380
+            height: 100
+            anchors.bottom: topbar.bottom
+            anchors.right: topbar.right
         }
 
         ConnectState{

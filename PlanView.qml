@@ -75,6 +75,18 @@ Rectangle {
                 count: index
             }
         }
+
+        Button{
+            id:networkTest
+            anchors.top: planview.top
+            anchors.left: planview.left
+            text: "网络测试"
+            onClicked: {//调用udp发送函数，发一段数字
+                console.log("UDP Test")
+                myUdpNet.udpSendData()
+            }
+        }
+
         Button{
             id:uplaodbutton
             anchors.bottom: planview.bottom
