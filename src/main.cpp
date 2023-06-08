@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
     Vehicle vehicle;
     MissionController missioncontroller(&vehicle);
     NetworkUDP myUdpNet;
-
+    vehicle.my_mavlink->_mavprotocol->_udplink = &myUdpNet;
 
     MissionController::missionlist = polygons.polygons();
     Polygons::readMissionItem = missioncontroller.getMavMission();

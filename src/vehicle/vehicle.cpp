@@ -134,6 +134,7 @@ void Vehicle::sendHeartBeatToVehicle(uint32_t custom_mode,uint8_t mavlink_versio
     uint8_t buff[MAVLINK_MAX_PACKET_LEN];
     int len = mavlink_msg_to_send_buffer(buff,&message);
     my_mavlink->_mavprotocol->_seriallink->sendMavlinkMessage((const char*)buff, len);
+    my_mavlink->_mavprotocol->_udplink->sendMavlinkMessage((const char*)buff, len);
 }
 
 void Vehicle::checkConnect()

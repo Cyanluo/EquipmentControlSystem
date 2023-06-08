@@ -3,8 +3,8 @@
 NetworkUDP::NetworkUDP(QObject *parent)
     : QObject{parent}
 {
-    UdpSocket->bind(QHostAddress("127.0.0.1"),5555);
-    connect(UdpSocket,&QUdpSocket::readyRead,this,&NetworkUDP::readMessage);
+//        UdpSocket->bind(QHostAddress("127.0.0.1"),5555);
+//        connect(UdpSocket,&QUdpSocket::readyRead,this,&NetworkUDP::readMessage);
 }
 
 
@@ -27,11 +27,40 @@ void NetworkUDP::readMessage()
         if(databuffer.size() > 10 *1024)         //10 *1024是自己设定的一个阈值，控制信号发送频率，不至于太快
         {
             //发送需要处理数据信号
+            emit bytesReceived(databuffer);
             qDebug()<<"databuffer的大小："<<databuffer.size();
             databuffer.clear();
         }
     }
     qDebug()<<"databuffer的大小："<<databuffer.size();
+    emit bytesReceived(databuffer);
+}
+
+bool NetworkUDP::udpBind()
+{
+    bool isbind;
+    isbind = UdpSocket->bind(QHostAddress("127.0.0.1"),5555);
+    connect(UdpSocket,&QUdpSocket::readyRead,this,&NetworkUDP::readMessage);
+    return isbind;
+}
+
+void NetworkUDP::udpClose()
+{
+    disconnect(UdpSocket,&QUdpSocket::readyRead,this,&NetworkUDP::readMessage);
+    UdpSocket->close();
+    ipAndPortValid = false;
+    emit udpClosed();
+}
+
+void NetworkUDP::sendMavlinkMessage(const char *bytes, int length)
+{
+    if(!ipAndPortValid)
+    {
+        return;
+    }
+    QByteArray datagram(bytes,length);
+    UdpSocket->writeDatagram(datagram, _ipAddr, _port);
+    qDebug()<<"mavlink send success!-use udp";
 }
 
 //udp发送数据函数
@@ -42,6 +71,7 @@ void NetworkUDP::udpSendData()
     qDebug()<<"send success!";
 }
 
+//从qml获取IP地址与端口号
 void NetworkUDP::getIpAndPort(QString ipaddr, QString portname)
 {
     if(nullptr == ipaddr || nullptr == portname)
@@ -58,5 +88,14 @@ void NetworkUDP::getIpAndPort(QString ipaddr, QString portname)
         qDebug()<<"convert port to int err";
         return;
     }
-    udpConnect = true;          //转换正常则正常连接
+    //udpConnect = true;          //转换正常则正常连接
+    //这里的bind与qml读的ip和端口号无关，只是监听本机收数据的端口
+    if(udpBind())
+    {
+        ipAndPortValid = true;
+        emit updConnected();
+    }
+
 }
+
+

@@ -73,8 +73,8 @@ Window {
             }
         }
         NetTool{
-            width: 380
-            height: 100
+            width: 340
+            height: 120
             anchors.bottom: topbar.bottom
             anchors.right: topbar.right
         }
