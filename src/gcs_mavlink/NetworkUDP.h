@@ -27,7 +27,7 @@ public:
 
     //Q_PROPERTY(bool udpConnect READ getUdpConnect WRITE setUdpConnect NOTIFY udpConnectChanged)
 
-    Q_INVOKABLE void udpSendData();     //Udp发送数据--test
+//    Q_INVOKABLE void udpSendData();     //Udp发送数据--test
     Q_INVOKABLE void getIpAndPort(QString ipaddr, QString portname);
     Q_INVOKABLE void udpClose();                                    //关闭udp
 

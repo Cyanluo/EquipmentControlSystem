@@ -19,7 +19,7 @@ public slots:
     void receiveByte(QByteArray b);
 public:
     SerialLink* _seriallink = nullptr;
-    static NetworkUDP* _udplink;
+    NetworkUDP* _udplink    = nullptr;
 
 protected:
     mavlink_message_t _message;

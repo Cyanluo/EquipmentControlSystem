@@ -19,8 +19,8 @@ int main(int argc, char *argv[])
     Polygons polygons;
     Vehicle vehicle;
     MissionController missioncontroller(&vehicle);
-    NetworkUDP myUdpNet;
-    vehicle.my_mavlink->_mavprotocol->_udplink = &myUdpNet;
+    //NetworkUDP myUdpNet;
+    //vehicle.my_mavlink->_mavprotocol->_udplink = &myUdpNet;
 
     MissionController::missionlist = polygons.polygons();
     Polygons::readMissionItem = missioncontroller.getMavMission();
@@ -31,14 +31,14 @@ int main(int argc, char *argv[])
     qmlRegisterUncreatableType<Vehicle>("Object",1,0,"Vehicle","Reference only");
     qmlRegisterUncreatableType<MissionController>("Object",1,0,"MissionController","Reference only");
     qmlRegisterType<DrawTrace>("setcd",1,0,"SettingCoordinate");
-    qmlRegisterUncreatableType<NetworkUDP>("Udp",1,0,"NetworkUDP","Reference only");
+    //qmlRegisterUncreatableType<NetworkUDP>("Udp",1,0,"NetworkUDP","Reference only");
 
 
     QQmlApplicationEngine engine;
     engine.rootContext()->setContextProperty("myPolygons",&polygons);
     engine.rootContext()->setContextProperty("activeVehicle",&vehicle);
     engine.rootContext()->setContextProperty("missioncontroller",&missioncontroller);
-    engine.rootContext()->setContextProperty("myUdpNet",&myUdpNet);
+    engine.rootContext()->setContextProperty("myUdpNet",vehicle.my_mavlink->_mavprotocol->_udplink);
     const QUrl url(QStringLiteral("qrc:/main.qml"));
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
                      &app, [url](QObject *obj, const QUrl &objUrl) {

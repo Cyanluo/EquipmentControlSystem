@@ -289,7 +289,7 @@ void Polygons::userDefineMissionSimple()
 
     //绕一圈
     x = 8;
-    y = 85;
+    y = 88;
     missionitem* mission_1 = new missionitem;
     mission_1->setNumber_x(x*planScreenW/100);
     mission_1->setNumber_y(y*planScreenH/100);
@@ -303,7 +303,7 @@ void Polygons::userDefineMissionSimple()
     prey = y;
 
     x = 90;
-    y = 85;
+    y = 88;
     missionitem* mission_2 = new missionitem;
     mission_2->setNumber_x(x*planScreenW/100);
     mission_2->setNumber_y(y*planScreenH/100);
@@ -317,7 +317,7 @@ void Polygons::userDefineMissionSimple()
     prey = y;
 
     x = 90;
-    y = 15;
+    y = 13;
     missionitem* mission_3 = new missionitem;
     mission_3->setNumber_x(x*planScreenW/100);
     mission_3->setNumber_y(y*planScreenH/100);
@@ -331,7 +331,7 @@ void Polygons::userDefineMissionSimple()
     prey = y;
 
     x = 8;
-    y = 15;
+    y = 13;
     missionitem* mission_4 = new missionitem;
     mission_4->setNumber_x(x*planScreenW/100);
     mission_4->setNumber_y(y*planScreenH/100);

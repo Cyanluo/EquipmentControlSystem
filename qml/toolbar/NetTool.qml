@@ -35,7 +35,7 @@ Rectangle{
         TextField{
             id:ipText
             selectByMouse: true
-            text: "127.0.0.1"
+            text: "192.168.137.129"
             font.pixelSize: 18
             Layout.preferredWidth: textlayout.width
             background: Rectangle{
@@ -47,7 +47,7 @@ Rectangle{
         TextField{
             id:portText
             selectByMouse: true
-            text: "6666"
+            text: "8080"
             font.pixelSize: 18
             Layout.preferredWidth: textlayout.width
             background: Rectangle{

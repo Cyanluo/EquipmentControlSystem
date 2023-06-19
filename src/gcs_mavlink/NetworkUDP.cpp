@@ -20,7 +20,9 @@ void NetworkUDP::readMessage()
         quint16 senderPort;                                 //存储发送方的端口号
         QHostAddress sender;                                //存储发送方的IP地址
         qint64 slen = UdpSocket->readDatagram(datagram.data(), datagram.size(), &sender, &senderPort);
+        //UdpSocket->errorString();
         if (slen == -1) {
+            qDebug()<<"slen == -1";
             break;
         }
         databuffer.append(datagram);
@@ -28,18 +30,20 @@ void NetworkUDP::readMessage()
         {
             //发送需要处理数据信号
             emit bytesReceived(databuffer);
-            qDebug()<<"databuffer的大小："<<databuffer.size();
+            //qDebug()<<"databuffer的大小："<<databuffer.size();
             databuffer.clear();
         }
     }
-    qDebug()<<"databuffer的大小："<<databuffer.size();
+    qDebug()<<"sizeof databuffer:"<<databuffer.size();
+    qDebug()<<"databuffer.count:"<<databuffer.count();
     emit bytesReceived(databuffer);
 }
 
 bool NetworkUDP::udpBind()
 {
     bool isbind;
-    isbind = UdpSocket->bind(QHostAddress("127.0.0.1"),5555);
+    //QHostAddress host = QHostAddress::AnyIPv4;
+    isbind = UdpSocket->bind(/*host*/QHostAddress("192.168.137.1"),14550);
     connect(UdpSocket,&QUdpSocket::readyRead,this,&NetworkUDP::readMessage);
     return isbind;
 }
@@ -64,12 +68,12 @@ void NetworkUDP::sendMavlinkMessage(const char *bytes, int length)
 }
 
 //udp发送数据函数
-void NetworkUDP::udpSendData()
-{
-    QByteArray datagram{"This is a test message!"};
-    UdpSocket->writeDatagram(datagram, _ipAddr, _port);
-    qDebug()<<"send success!";
-}
+//void NetworkUDP::udpSendData()
+//{
+//    QByteArray datagram{"This is a test message!"};
+//    UdpSocket->writeDatagram(datagram, _ipAddr, _port);
+//    qDebug()<<"send success!";
+//}
 
 //从qml获取IP地址与端口号
 void NetworkUDP::getIpAndPort(QString ipaddr, QString portname)
@@ -95,7 +99,6 @@ void NetworkUDP::getIpAndPort(QString ipaddr, QString portname)
         ipAndPortValid = true;
         emit updConnected();
     }
-
 }
 
 

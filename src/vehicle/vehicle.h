@@ -13,6 +13,7 @@ class Vehicle :public QObject
 public slots:
     void _mavlinkMessageReceived(mavlink_message_t msg);
     void arduDisconnect(void);
+    void oneSecondLoop(void);
 
 
 
@@ -41,6 +42,7 @@ signals:
 
 public:
     QTimer *timer         = new QTimer(this);
+    QTimer *HBTimer       = new QTimer(this);
 
     float pitch          = 0;
     float yaw            = 0;
@@ -80,6 +82,7 @@ private:
     void   setBeginConnect(bool x);
     void   setIsConnected(bool x);
     void   setPowerVcc(int pv);
+
 
 
 

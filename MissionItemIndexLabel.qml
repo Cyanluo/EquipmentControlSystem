@@ -28,9 +28,9 @@ Item {
     property real   _height:            1
     property real   _gimbalYawRadius:   10
     property real   _gimbalYawWidth:    _gimbalYawRadius * 2
-    property real   _smallRadiusRaw:    9
+    property real   _smallRadiusRaw:    15
     property real   _smallRadius:       _smallRadiusRaw + ((_smallRadiusRaw % 2 == 0) ? 1 : 0) // odd number for better centering
-    property real   _normalRadiusRaw:   12
+    property real   _normalRadiusRaw:   18
     property real   _normalRadius:      _normalRadiusRaw + ((_normalRadiusRaw % 2 == 0) ? 1 : 0)
     property real   _indicatorRadius:   small ? _smallRadius : _normalRadius
     property real   _labelMargin:       2
@@ -82,6 +82,36 @@ Item {
         height:                         width
         color:                          root.color     //颜色这里需要改一下，看聚焦与否
         radius:                         _indicatorRadius
+        Rectangle{
+            width: parent.width/4
+            height: width
+            color: parent.color
+            radius: width/2
+        }
+        Rectangle{
+            anchors.right: parent.right
+            anchors.top: parent.top
+            width: parent.width/4
+            height: width
+            color: parent.color
+            radius: width/2
+        }
+        Rectangle{
+            anchors.left: parent.left
+            anchors.bottom: parent.bottom
+            width: parent.width/4
+            height: width
+            color: parent.color
+            radius: width/2
+        }
+        Rectangle{
+            anchors.right: parent.right
+            anchors.bottom: parent.bottom
+            width: parent.width/4
+            height: width
+            color: parent.color
+            radius: width/2
+        }
 
         Label {
             anchors.fill:           parent
@@ -126,17 +156,14 @@ Item {
         }
 
         onPositionChanged: {
-                    if (pressed&&checked) {
-                        //鼠标按住的前提下，坐标改变时，计算偏移量，应用到目标item的坐标上即可
-                        root.x += mouseX - lastX
-                        root.y += mouseY - lastY
-                        myPolygons.missiondrag(index,root.x,root.y)
-                        //console.log(root.x,root.y)
-                    }
-                }
+            if (pressed&&checked) {
+                //鼠标按住的前提下，坐标改变时，计算偏移量，应用到目标item的坐标上即可
+                root.x += mouseX - lastX
+                root.y += mouseY - lastY
+                myPolygons.missiondrag(index,root.x,root.y)
+                //console.log(root.x,root.y)
+            }
+        }
     }
-
-
-
 }
 

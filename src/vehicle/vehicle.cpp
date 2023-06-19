@@ -5,7 +5,8 @@
 
 Vehicle::Vehicle()
 {
-
+    connect(HBTimer, &QTimer::timeout, this, &Vehicle::oneSecondLoop);
+    HBTimer->start(1000);
     connect(timer,&QTimer::timeout,this,&Vehicle::arduDisconnect);
     connect(my_mavlink,&GCS_Mavlink::received,this,&Vehicle::_mavlinkMessageReceived);
 }
@@ -115,7 +116,9 @@ void Vehicle::handleHeartBeatMessage(mavlink_message_t msg)
     }
 }
 
-void Vehicle::sendHeartBeatToVehicle(uint32_t custom_mode,uint8_t mavlink_version,uint8_t autopilot,uint8_t base_mode,uint8_t system_status,uint8_t type)
+void Vehicle::sendHeartBeatToVehicle(uint32_t custom_mode,uint8_t mavlink_version,
+                                     uint8_t autopilot,uint8_t base_mode,
+                                     uint8_t system_status,uint8_t type)
 {
     mavlink_heartbeat_t heartBeat;
     heartBeat.mavlink_version = mavlink_version;
@@ -213,6 +216,12 @@ void Vehicle::setPowerVcc(int pv)
 {
     powerVcc = pv;
     emit powerVccChanged();
+}
+
+void Vehicle::oneSecondLoop()
+{
+    //qDebug()<<"send one second loop";
+    sendHeartBeatToVehicle(4,3,3,1,5,10);
 }
 
 
