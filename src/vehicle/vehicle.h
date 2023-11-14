@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include "src/gcs_mavlink/gcs_mavlink.h"
+#include "src/vehicle/TBM_Trace.h"
 
 class Vehicle :public QObject
 {
@@ -56,16 +57,17 @@ public:
     bool  beginConnect   = false;
     bool  isConnected    = false;
 
-    GCS_Mavlink* my_mavlink = new GCS_Mavlink;;
-
+    GCS_Mavlink *my_mavlink = new GCS_Mavlink;
+    TBM_Trace   *_tbmTrace  = new TBM_Trace;
 
 
 private:
     void   handleHeartBeatMessage(mavlink_message_t msg);
-    void   handleTestMessgae(mavlink_message_t msg);
     void   handleAltitude(mavlink_message_t msg);
     void   handleAttitude(mavlink_message_t msg);
     void   handlePowerStatus(mavlink_message_t msg);
+    void   handleTBM_Positional_Parameters(mavlink_message_t msg);
+    void   handleRangefinder(mavlink_message_t msg);
     void   sendHeartBeatToVehicle(uint32_t custom_mode,uint8_t mavlink_version,uint8_t autopilot,uint8_t base_mode,uint8_t system_status,uint8_t type);
     void   checkConnect();
     float  getPitch();

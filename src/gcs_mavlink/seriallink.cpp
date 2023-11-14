@@ -5,7 +5,7 @@ SerialLink::SerialLink(QObject *parent)
     : QObject{parent}
 {
     //设置串口名
-    _port->setPortName("COM12");
+    _port->setPortName("COM11");
     //设置波特率
     _port->setBaudRate(QSerialPort::Baud115200);
     //设置数据位数

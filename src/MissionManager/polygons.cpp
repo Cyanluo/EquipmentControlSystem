@@ -591,8 +591,6 @@ void Polygons::convertToMissonitem()
     _polygons.clear();
     _lineModel.clear();
     isInsert = false;
-    //还没写好，在重新规划行航点时会崩溃
-    //需要再看一下行航点显示逻辑
 
     int prenumber_x = 0;
     int prenumber_y = 0;
@@ -605,6 +603,9 @@ void Polygons::convertToMissonitem()
         missionItem->setNumber_y((int)(mavItem->param2() * planScreenH));
         qDebug()<<"x:"<<mavItem->param1();
         qDebug()<<"y:"<<mavItem->param2();
+        qDebug()<<"late  x:"<<missionItem->getNumber_x();
+        qDebug()<<"late  y:"<<missionItem->getNumber_y();
+
 
         //第一个点的pre xy等于自己的xy
         if(index == 0){

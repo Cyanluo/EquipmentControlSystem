@@ -80,7 +80,7 @@ Rectangle {
                 Label{
                     id: electricity
                     anchors.centerIn: parent
-                    text: "26"
+                    text: "0"
                     font.pixelSize: 20
                 }
             }
@@ -92,7 +92,7 @@ Rectangle {
                 Label{
                     id:temperature
                     anchors.centerIn: parent
-                    text: "15"
+                    text: "0"
                     font.pixelSize: 20
                 }
             }
@@ -104,7 +104,7 @@ Rectangle {
                 Label{
                     id:speed
                     anchors.centerIn: parent
-                    text: "20"
+                    text: "0"
                     font.pixelSize: 20
                 }
             }

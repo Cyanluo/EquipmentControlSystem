@@ -140,6 +140,9 @@ void MissionController::initMavmission(QmlObjectListModel *MissionItems)
 
     int missionCount;
     missionCount = MissionItems->count();
+
+    qDebug()<<"planScreenW"<<Polygons::planScreenW<<"planScreenH"<<Polygons::planScreenH;
+
     for(int seqNum = 0; seqNum < missionCount; seqNum++)
     {
         missionitem* missionItem = qobject_cast<missionitem*>(MissionItems->get(seqNum));
@@ -286,7 +289,6 @@ void MissionController::_handleMissionItem(const mavlink_message_t &message, boo
         param7 =        (double)missionItem.z;
         autoContinue =  missionItem.autocontinue;
         seq =           missionItem.seq;
-        qDebug()<<"int";
     } else {
         mavlink_mission_item_t missionItem;
         mavlink_msg_mission_item_decode(&message, &missionItem);

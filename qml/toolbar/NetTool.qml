@@ -81,13 +81,13 @@ Rectangle{
     }
     Connections{
         target: myUdpNet
-        onUpdConnected:{
+        function onUpdConnected() {
             ipText.readOnly = true
             portText.readOnly = true
             ipRec.color = "grey"
             portRec.color = "grey"
         }
-        onUdpClosed:{
+        function onUdpClosed() {
             ipText.readOnly = false
             portText.readOnly = false
             ipRec.color = "white"

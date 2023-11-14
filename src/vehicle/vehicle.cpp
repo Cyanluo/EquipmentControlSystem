@@ -20,36 +20,38 @@ void Vehicle::_mavlinkMessageReceived(mavlink_message_t msg)
     //传给missioncontroller
     emit receiveMissionMsg(msg);
     //qDebug()<<msg.msgid;
+
     switch (msg.msgid) {
     case MAVLINK_MSG_ID_HEARTBEAT:
         handleHeartBeatMessage(msg);
         break;
-    case MAVLINK_MSG_ID_TEST:
-        handleTestMessgae(msg);
-        break;
+
     case MAVLINK_MSG_ID_ATTITUDE:
         handleAttitude(msg);
         break;
+
     case MAVLINK_MSG_ID_ALTITUDE:
         handleAltitude(msg);
         break;
+
     case MAVLINK_MSG_ID_POWER_STATUS:
         handlePowerStatus(msg);
         break;
+
+    case MAVLINK_MSG_ID_TBM_POSITIONAL_PARAMETERS:
+        handleTBM_Positional_Parameters(msg);
+        break;
+
+    case MAVLINK_MSG_ID_RANGEFINDER:
+        handleRangefinder(msg);
+        break;
+
     default:
         //qDebug()<<"没有处理的消息id："<<msg.msgid;
         break;
     }
 }
 
-
-
-void Vehicle::handleTestMessgae(mavlink_message_t msg)
-{
-    mavlink_test_t test;
-    mavlink_msg_test_decode(&msg,&test);
-    //qDebug()<<test.byte1<<test.byte2<<test.byte3<<test.byte4<<test.byte5<<test.byte6;
-}
 
 void Vehicle::handleAltitude(mavlink_message_t msg)
 {
@@ -71,15 +73,32 @@ void Vehicle::handleAttitude(mavlink_message_t msg)
         initYawOffset = false;
         reconnect = false;
     }
-
 }
 
 void Vehicle::handlePowerStatus(mavlink_message_t msg)
 {
     mavlink_power_status_t powerStatus;
     mavlink_msg_power_status_decode(&msg,&powerStatus);
+//    _tbmTrace->setCoordinate_x(powerStatus.Vcc);   //533是坐标系x偏置
+//    _tbmTrace->setCoordinate_y(powerStatus.Vservo);   //556是y向偏置
     setPowerVcc(powerStatus.Vcc);
     //qDebug()<<powerStatus.Vcc<<"//"<<powerStatus.Vservo<<"//"<<powerStatus.flags;
+}
+
+void Vehicle::handleTBM_Positional_Parameters(mavlink_message_t msg)
+{
+    mavlink_tbm_positional_parameters_t tbm_pp;
+    mavlink_msg_tbm_positional_parameters_decode(&msg, &tbm_pp);
+    _tbmTrace->setCoordinate_x(tbm_pp.rdheader_xb + 533);   //533是坐标系x偏置
+    _tbmTrace->setCoordinate_y(556 - tbm_pp.rdheader_yb);   //556是y向偏置
+    qDebug()<<"rdheader_xb:"<<tbm_pp.rdheader_xb;
+    qDebug()<<"rdheader_yb:"<<tbm_pp.rdheader_yb;
+
+}
+
+void Vehicle::handleRangefinder(mavlink_message_t msg)
+{
+
 }
 
 
@@ -88,13 +107,6 @@ void Vehicle::handleHeartBeatMessage(mavlink_message_t msg)
 {
     mavlink_heartbeat_t heartbeat;
     mavlink_msg_heartbeat_decode(&msg,&heartbeat);
-//    qDebug()<<"recevied heartbeat message";
-//    qDebug()<<heartbeat.mavlink_version;
-//    qDebug()<<heartbeat.autopilot;
-//    qDebug()<<heartbeat.base_mode;
-//    qDebug()<<heartbeat.custom_mode;
-//    qDebug()<<heartbeat.system_status;
-//    qDebug()<<heartbeat.type;
 
     sendHeartBeatToVehicle(heartbeat.custom_mode,
                            heartbeat.mavlink_version,

@@ -1,6 +1,7 @@
 ﻿import QtQuick 2.15
 import QtQuick.Controls 2.5
 import QtQuick.Window 2.0
+import "./qml/traceDisplay/"
 
 Rectangle {
     id: midview
@@ -17,8 +18,138 @@ Rectangle {
         visible: showplan
         border.width: 4
         border.color: "#191970"
-        z:2
+        z:4
         color:"black"
+
+        Row{
+            width: parent.width
+            height: 1
+            spacing: 5
+            clip: true
+            anchors.top: parent.top
+            anchors.topMargin: parent.height/2
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.rightMargin: 15
+            anchors.leftMargin: 15
+            Repeater{
+                anchors.fill: parent
+                model: 100
+                delegate:Rectangle{
+                    width: 10
+                    height: 1
+                    color: "#2b5876"
+                }
+            }
+        }
+
+        Column{
+            width:1
+            spacing: 5
+            clip: true
+            anchors.top: parent.top
+            anchors.right: parent.right
+            anchors.rightMargin: parent.width/4
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 10
+
+            Repeater{
+                anchors.fill: parent
+                model: 75
+                delegate:Rectangle{
+                    width:1
+                    height: 10
+                    color: "#2b5876"
+                }
+            }
+        }
+
+        Column{
+            width:1
+            spacing: 5
+            clip: true
+            anchors.top: parent.top
+            anchors.right: parent.right
+            anchors.rightMargin: parent.width*3/4
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 10
+
+            Repeater{
+                anchors.fill: parent
+                model: 75
+                delegate:Rectangle{
+                    width:1
+                    height: 10
+                    color: "#2b5876"
+                }
+            }
+        }
+
+        Column{
+            width:1
+            spacing: 5
+            clip: true
+            anchors.top: parent.top
+            anchors.right: parent.right
+            anchors.rightMargin: parent.width/2
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 10
+
+            Repeater{
+                anchors.fill: parent
+                model: 75
+                delegate:Rectangle{
+                    width:1
+                    height: 10
+                    color: "#2b5876"
+                }
+            }
+        }
+
+        Rectangle{
+            width: 2
+            height: 2
+            radius: 1
+            x: 861
+            y: 222
+            color: "red"
+        }
+
+        Rectangle{
+            width: 2
+            height: 2
+            radius: 1
+            x: 790
+            y: 505
+            color: "red"
+        }
+
+        Rectangle{
+            width: 2
+            height: 2
+            radius: 1
+            x: 582
+            y: 547
+            color: "red"
+        }
+
+        Rectangle{
+            width: 2
+            height: 2
+            radius: 1
+            x: 318.5
+            y: 361
+            color: "red"
+        }
+
+        Rectangle{
+            width: 2
+            height: 2
+            radius: 1
+            x: 298.5
+            y: 258
+            color: "red"
+        }
 
 
 
@@ -43,17 +174,19 @@ Rectangle {
                 myPolygons.setGetx(mouseX)
                 myPolygons.setGety(mouseY)
                 myPolygons.setprecoordinate(mouseX,mouseY)
-                //console.log(mouseX,mouseY)
+                console.log(mouseX,mouseY)
                 exist_a_path = true
                 if(!myPolygons.getisInsert())
                     myPolygons.setMissionitemfocus(index)
+
+                console.log(midview.width,midview.height)
             }
         }
 
         Repeater{
             model: myPolygons.polygons
             delegate:MissionItemIndexLabel{
-                z:2
+                z:4
                 labelx: model.object.number_x
                 labely: model.object.number_y
                 index: model.object.missionindex
@@ -67,7 +200,7 @@ Rectangle {
         Repeater{
             model:myPolygons.lineModel
             delegate: PloyLine{
-                z:1
+                z:3
                 currentx:  model.object.number_x
                 currenty:  model.object.number_y
                 previousx: model.object.prenumber_x
@@ -179,8 +312,15 @@ Rectangle {
         }
     }
 
-    TraceDisplay{
-        id:traceview
+//    TraceDisplay{
+//        id:traceview
+//        visible: !showplan
+//        border.width: 4
+//        border.color: "#483d8b"
+//    }
+
+    TraceDisplayPro{
+        id:traceviewpro
         visible: !showplan
         border.width: 4
         border.color: "#483d8b"
@@ -200,7 +340,7 @@ Rectangle {
         height: 45
         text: "截割轨迹"
         font.pixelSize: 18
-        z:2
+        z:4
 
         onClicked: {
             showplan = false
@@ -221,7 +361,7 @@ Rectangle {
         height: 45
         text: "航点规划"
         font.pixelSize: 18
-        z:2
+        z:4
 
         onClicked: {
             showplan = true

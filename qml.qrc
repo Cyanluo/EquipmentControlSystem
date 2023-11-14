@@ -10,5 +10,6 @@
         <file>Pitch_A_Roll.qml</file>
         <file>ConnectState.qml</file>
         <file>qml/toolbar/NetTool.qml</file>
+        <file>qml/traceDisplay/TraceDisplayPro.qml</file>
     </qresource>
 </RCC>

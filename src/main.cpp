@@ -4,7 +4,7 @@
 #include <QQmlContext>
 #include <QQuickWindow>
 #include <QQuickView>
-#include "drawtrace.h"
+#include "src/vehicle/TBM_Trace.h"
 #include "src/MissionManager/polygons.h"
 #include "src/vehicle/vehicle.h"
 #include "src/MissionManager/missioncontroller.h"
@@ -19,8 +19,6 @@ int main(int argc, char *argv[])
     Polygons polygons;
     Vehicle vehicle;
     MissionController missioncontroller(&vehicle);
-    //NetworkUDP myUdpNet;
-    //vehicle.my_mavlink->_mavprotocol->_udplink = &myUdpNet;
 
     MissionController::missionlist = polygons.polygons();
     Polygons::readMissionItem = missioncontroller.getMavMission();
@@ -30,8 +28,7 @@ int main(int argc, char *argv[])
     qmlRegisterType<Polygons>("Poj",1,0,"Polygons");
     qmlRegisterUncreatableType<Vehicle>("Object",1,0,"Vehicle","Reference only");
     qmlRegisterUncreatableType<MissionController>("Object",1,0,"MissionController","Reference only");
-    qmlRegisterType<DrawTrace>("setcd",1,0,"SettingCoordinate");
-    //qmlRegisterUncreatableType<NetworkUDP>("Udp",1,0,"NetworkUDP","Reference only");
+    qmlRegisterType<TBM_Trace>("setcoord",1,0,"SettingCoordinate");
 
 
     QQmlApplicationEngine engine;
@@ -39,6 +36,7 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("activeVehicle",&vehicle);
     engine.rootContext()->setContextProperty("missioncontroller",&missioncontroller);
     engine.rootContext()->setContextProperty("myUdpNet",vehicle.my_mavlink->_mavprotocol->_udplink);
+    engine.rootContext()->setContextProperty("tbmPos",vehicle._tbmTrace);
     const QUrl url(QStringLiteral("qrc:/main.qml"));
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
                      &app, [url](QObject *obj, const QUrl &objUrl) {
@@ -57,24 +55,7 @@ int main(int argc, char *argv[])
     // 设置窗口为全屏
     window->showMaximized();
 
-//    QQuickView view;
-//    view.setResizeMode(QQuickView::SizeRootObjectToView);
-//    view.setSource(QUrl(QStringLiteral("qrc:/main.qml")));
 
-//    QObject::connect(view.engine(), &QQmlEngine::quit, &app, &QGuiApplication::quit);
-
-//    // 监听窗口大小变化事件
-//    QObject::connect(view.engine(), &QQmlEngine::quit, &app, &QGuiApplication::quit);
-
-//    QObject::connect(&view, &QQuickView::widthChanged, [&view]() {
-//        // 屏幕宽度变化时刷新显示
-//        view.update();
-//    });
-
-//    QObject::connect(&view, &QQuickView::heightChanged, [&view]() {
-//        // 屏幕高度变化时刷新显示
-//        view.update();
-//    });
 
     return app.exec();
 }

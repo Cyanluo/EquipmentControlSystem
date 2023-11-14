@@ -1,7 +1,7 @@
 ﻿import QtQuick 2.15
 import QtQuick.Window 2.15
 
-import setcd 1.0
+import setcoord 1.0
 Rectangle{
     id: root
     anchors.fill: parent
@@ -63,8 +63,8 @@ Rectangle{
             ctx.beginPath()
             ctx.lineWidth = 1
             ctx.strokeStyle = "black"
-            ctx.moveTo(carPreviousX*10, carPreviousY*10)
-            ctx.lineTo(carCurrentX*10, carCurrentY*10)
+            ctx.moveTo(carPreviousX, carPreviousY)
+            ctx.lineTo(carCurrentX, carCurrentY)
             ctx.closePath()
             ctx.stroke()
         }
@@ -75,7 +75,7 @@ Rectangle{
             if(carCurrentX === -1)
             {
                 ctx.beginPath();
-                ctx.arc(carPreviousX*10,carPreviousY*10,10,0,2*Math.PI)
+                ctx.arc(carPreviousX,carPreviousY,10,0,2*Math.PI)
                 ctx.closePath();
                 ctx.fillStyle="orange"
                 ctx.font = "15px sans-serif"
@@ -85,7 +85,7 @@ Rectangle{
             else
             {
                 ctx.beginPath();
-                ctx.arc(carCurrentX*10,carCurrentY*10,10,0,2*Math.PI)
+                ctx.arc(carCurrentX,carCurrentY,10,0,2*Math.PI)
                 ctx.closePath();
                 ctx.fillStyle="orange"
                 ctx.font = "15px sans-serif"
@@ -100,8 +100,8 @@ Rectangle{
             ctx.beginPath()
             ctx.lineWidth = 2
             ctx.strokeStyle = "white"
-            ctx.moveTo(carPreviousX_D*10, carPreviousY_D*10)
-            ctx.lineTo(carCurrentX_D*10, carCurrentY_D*10)
+            ctx.moveTo(carPreviousX_D, carPreviousY_D)
+            ctx.lineTo(carCurrentX_D, carCurrentY_D)
             ctx.closePath()
             ctx.stroke()
         }
@@ -112,7 +112,7 @@ Rectangle{
             if(carCurrentX_D === -1)
             {
                 ctx.beginPath();
-                ctx.arc(carPreviousX_D*10,carPreviousY_D*10,10,0,2*Math.PI)
+                ctx.arc(carPreviousX_D,carPreviousY_D,10,0,2*Math.PI)
                 ctx.closePath();
                 ctx.fillStyle = "white"
                 ctx.strokeStyle = "white"
@@ -124,7 +124,7 @@ Rectangle{
             else
             {
                 ctx.beginPath();
-                ctx.arc(carCurrentX_D*10,carCurrentY_D*10,10,0,2*Math.PI)
+                ctx.arc(carCurrentX_D,carCurrentY_D,10,0,2*Math.PI)
                 ctx.closePath();
                 ctx.fillStyle="white"
                 ctx.strokeStyle = "white"
@@ -146,78 +146,149 @@ Rectangle{
             countpoint_D = countpoint_D + 1
         }
 
+        function drawCoord()   {
+            mapCanvas.addcountpoint()
+            //console.log("current", tbmPos.coordinate_x, tbmPos.coordinate_y)
 
-
-
-
-        SettingCoordinate{
-
-            onCoordinateChanged:  {
-                //mapCanvas.addindex()
-                mapCanvas.addcountpoint()
-                console.log("current",coordinate_x,coordinate_y)
-
-                //如果是第一个点
-                if(carPreviousX === -1)
-                {
-                    carPreviousX = coordinate_x;
-                    carPreviousY = coordinate_y;
-                }
-                else
-                {
-                    //如果是第二个点
-                    if(carCurrentX === -1)
-                    {
-                        carCurrentX = coordinate_x;
-                        carCurrentY = coordinate_y;
-                    }
-                    else
-                    {
-                        //记录并更新每次的点
-                        carPreviousX = carCurrentX;
-                        carPreviousY = carCurrentY;
-                        carCurrentX = coordinate_x;
-                        carCurrentY = coordinate_y;
-                    }
-                }
-                if(countpoint >=5)
-                mapCanvas.requestPaint();
+            //如果是第一个点
+            if(carPreviousX === -1)
+            {
+                carPreviousX = tbmPos.coordinate_x;
+                carPreviousY = tbmPos.coordinate_y;
             }
-
-            //画消失部分
-            onCoordinatedisappearChanged: {
-                mapCanvas.addcountpoint_D()
-                console.log("disappear",coordinate_xdisappear,coordinate_ydisappear)
-
-
-                //如果是第一个点
-                if(carPreviousX_D === -1)
+            else
+            {
+                //如果是第二个点
+                if(carCurrentX === -1)
                 {
-                    carPreviousX_D = coordinate_xdisappear;
-                    carPreviousY_D = coordinate_ydisappear;
+                    carCurrentX = tbmPos.coordinate_x;
+                    carCurrentY = tbmPos.coordinate_y;
                 }
                 else
                 {
-                    //如果是第二个点
-                    if(carCurrentX_D === -1)
-                    {
-                        carCurrentX_D = coordinate_xdisappear;
-                        carCurrentY_D = coordinate_ydisappear;
-                    }
-                    else
-                    {
-                        //记录并更新每次的点
-                        carPreviousX_D = carCurrentX_D;
-                        carPreviousY_D = carCurrentY_D;
-                        carCurrentX_D = coordinate_xdisappear;
-                        carCurrentY_D = coordinate_ydisappear;
-                    }
+                    //记录并更新每次的点
+                    carPreviousX = carCurrentX;
+                    carPreviousY = carCurrentY;
+                    carCurrentX = tbmPos.coordinate_x;
+                    carCurrentY = tbmPos.coordinate_y;
                 }
-                if(countpoint_D >=5)              //此处需要改动
-                mapCanvas.requestPaint();
-            }                      
+            }
+            //if(countpoint >=5)
+            mapCanvas.requestPaint();
+        }
 
-       }
+        function drawCoordDisappear(){
+            mapCanvas.addcountpoint_D()
+            //console.log("disappear", tbmPos.coordinate_xdisappear, tbmPos.coordinate_ydisappear)
+            console.log(root.width, root.height)
+
+
+            //如果是第一个点
+            if(carPreviousX_D === -1)
+            {
+                carPreviousX_D = tbmPos.coordinate_xdisappear;
+                carPreviousY_D = tbmPos.coordinate_ydisappear;
+            }
+            else
+            {
+                //如果是第二个点
+                if(carCurrentX_D === -1)
+                {
+                    carCurrentX_D = tbmPos.coordinate_xdisappear;
+                    carCurrentY_D = tbmPos.coordinate_ydisappear;
+                }
+                else
+                {
+                    //记录并更新每次的点
+                    carPreviousX_D = carCurrentX_D;
+                    carPreviousY_D = carCurrentY_D;
+                    carCurrentX_D = tbmPos.coordinate_xdisappear;
+                    carCurrentY_D = tbmPos.coordinate_ydisappear;
+                }
+            }
+            //if(countpoint_D >=5)              //此处需要改动
+            mapCanvas.requestPaint();
+        }
+
+        Connections{
+            target: tbmPos
+            onCoordinateChanged:{
+                //console.log("onCoordinateChanged")
+                mapCanvas.drawCoord()
+            }
+            onCoordinatedisappearChanged:{
+                //console.log("onCoordinatedisappearChanged")
+                mapCanvas.drawCoordDisappear()
+            }
+        }
+
+//        SettingCoordinate{
+//            onCoordinateChanged:  {
+//                //mapCanvas.addindex()
+//                mapCanvas.addcountpoint()
+//                console.log("current", coordinate_x, coordinate_y)
+
+//                //如果是第一个点
+//                if(carPreviousX === -1)
+//                {
+//                    carPreviousX = coordinate_x;
+//                    carPreviousY = coordinate_y;
+//                }
+//                else
+//                {
+//                    //如果是第二个点
+//                    if(carCurrentX === -1)
+//                    {
+//                        carCurrentX = coordinate_x;
+//                        carCurrentY = coordinate_y;
+//                    }
+//                    else
+//                    {
+//                        //记录并更新每次的点
+//                        carPreviousX = carCurrentX;
+//                        carPreviousY = carCurrentY;
+//                        carCurrentX = coordinate_x;
+//                        carCurrentY = coordinate_y;
+//                    }
+//                }
+//                if(countpoint >=5)
+//                mapCanvas.requestPaint();
+//            }
+
+//            //画消失部分
+//            onCoordinatedisappearChanged: {
+//                mapCanvas.addcountpoint_D()
+//                console.log("disappear",coordinate_xdisappear,coordinate_ydisappear)
+
+
+//                //如果是第一个点
+//                if(carPreviousX_D === -1)
+//                {
+//                    carPreviousX_D = coordinate_xdisappear;
+//                    carPreviousY_D = coordinate_ydisappear;
+//                }
+//                else
+//                {
+//                    //如果是第二个点
+//                    if(carCurrentX_D === -1)
+//                    {
+//                        carCurrentX_D = coordinate_xdisappear;
+//                        carCurrentY_D = coordinate_ydisappear;
+//                    }
+//                    else
+//                    {
+//                        //记录并更新每次的点
+//                        carPreviousX_D = carCurrentX_D;
+//                        carPreviousY_D = carCurrentY_D;
+//                        carCurrentX_D = coordinate_xdisappear;
+//                        carCurrentY_D = coordinate_ydisappear;
+//                    }
+//                }
+//                if(countpoint_D >=5)              //此处需要改动
+//                mapCanvas.requestPaint();
+//            }
+
+//       }
   }
 }
 
