@@ -1,5 +1,5 @@
 /** @file
- *  @brief MAVLink comm protocol built from ardupilotmega.xml
+ *  @brief MAVLink comm protocol built from loweheiser.xml
  *  @see http://mavlink.org
  */
 #pragma once
@@ -9,6 +9,6 @@
 
 #define MAVLINK_BUILD_DATE "Mon Jan 01 2024"
 #define MAVLINK_WIRE_PROTOCOL_VERSION "2.0"
-#define MAVLINK_MAX_DIALECT_PAYLOAD_SIZE 255
+#define MAVLINK_MAX_DIALECT_PAYLOAD_SIZE 85
  
 #endif // MAVLINK_VERSION_H
