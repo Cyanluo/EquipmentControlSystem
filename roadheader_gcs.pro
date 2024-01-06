@@ -6,9 +6,16 @@
 # In order to do so, uncomment the following line.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
-INCLUDEPATH += $$PWD/libs/mavlink/include/v2.0
+INCLUDEPATH += $$PWD/libs/mavlink/include/v2.0 \
+                $$PWD/libs/tinycrypt/include
 
 SOURCES += \
+        libs/tinycrypt/src/aes_decrypt.c \
+        libs/tinycrypt/src/aes_encrypt.c \
+        libs/tinycrypt/src/cbc_mode.c \
+        libs/tinycrypt/src/utils.c \
+        src/Encipher/AESAssembler.cpp \
+        src/Encipher/AESEncipher.cpp \
         src/MissionManager/mavmission.cpp \
         src/MissionManager/missioncontroller.cpp \
         src/MissionManager/missionitem.cpp \
@@ -39,12 +46,16 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
+    src/Encipher/AESEncipher.h \
+    src/Encipher/queue.h \
+    src/Encipher/staticqueue.h \
     src/MissionManager/mavmission.h \
     src/MissionManager/missioncontroller.h \
     src/MissionManager/missionitem.h \
     src/MissionManager/planmanager.h \
     src/MissionManager/polygons.h \
     src/MissionManager/qmlobjectlistmodel.h \
+    src/gcs_mavlink/AbstractIO.h \
     src/gcs_mavlink/MAVLinkProtocol.h \
     src/gcs_mavlink/NetworkUDP.h \
     src/gcs_mavlink/gcs_mavlink.h \

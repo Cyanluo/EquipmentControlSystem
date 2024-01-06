@@ -10,7 +10,6 @@ class MavMission : public QObject
 public:
     explicit MavMission(QObject *parent = nullptr);
 
-
     void setCommand         (MAV_CMD command);
     void setSequenceNumber  (int sequenceNumber);
     void setFrame           (MAV_FRAME frame);

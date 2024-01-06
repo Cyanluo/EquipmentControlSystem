@@ -33,9 +33,7 @@ void MissionController::_requestList()
                                                mission_type);
     uint8_t buff[MAVLINK_MAX_PACKET_LEN];
     int len = mavlink_msg_to_send_buffer(buff, &message);
-    _vehicle->my_mavlink->_mavprotocol->_seriallink->sendMavlinkMessage((const char*)buff, len);
-    _vehicle->my_mavlink->_mavprotocol->_udplink->sendMavlinkMessage((const char*)buff, len);
-
+    _vehicle->my_mavlink->sendData((const char*)buff, len);
 }
 
 void MissionController::_readTransactionComplete()
@@ -53,8 +51,7 @@ void MissionController::_readTransactionComplete()
                                       mission_type);
     uint8_t buff[MAVLINK_MAX_PACKET_LEN];
     int len = mavlink_msg_to_send_buffer(buff, &message);
-    _vehicle->my_mavlink->_mavprotocol->_seriallink->sendMavlinkMessage((const char*)buff, len);
-    _vehicle->my_mavlink->_mavprotocol->_udplink->sendMavlinkMessage((const char*)buff, len);
+    _vehicle->my_mavlink->sendData((const char*)buff, len);
 
     disConnectFromMavlink();
     emit readComplete();
@@ -113,8 +110,7 @@ void MissionController::writeMissionCount()
                                         mission_type);//mission type
     uint8_t buff[MAVLINK_MAX_PACKET_LEN];
     int len = mavlink_msg_to_send_buffer(buff, &message);
-    _vehicle->my_mavlink->_mavprotocol->_seriallink->sendMavlinkMessage((const char*)buff, len);
-    _vehicle->my_mavlink->_mavprotocol->_udplink->sendMavlinkMessage((const char*)buff, len);
+    _vehicle->my_mavlink->sendData((const char*)buff, len);
 
     _startMissionTimeout(AckMissionRequest);  //开始定时，如果超时未收到MissionRequest应答，做进一步处理
 
@@ -216,8 +212,7 @@ void MissionController::_handleMissionRequest(mavlink_message_t message, bool mi
     qDebug()<<"x:"<<item->param1()<<"y:"<<item->param2(); //这里发送的数据是对的
     uint8_t buff[MAVLINK_MAX_PACKET_LEN];
     int len = mavlink_msg_to_send_buffer(buff, &messageOut);
-    _vehicle->my_mavlink->_mavprotocol->_seriallink->sendMavlinkMessage((const char*)buff, len);
-    _vehicle->my_mavlink->_mavprotocol->_udplink->sendMavlinkMessage((const char*)buff, len);
+    _vehicle->my_mavlink->sendData((const char*)buff, len);
 
     _startMissionTimeout(AckMissionRequest);
 }
@@ -255,8 +250,7 @@ void MissionController::_requestNextMissionItem()
                                               mission_type);
     uint8_t buff[MAVLINK_MAX_PACKET_LEN];
     int len = mavlink_msg_to_send_buffer(buff, &message);
-    _vehicle->my_mavlink->_mavprotocol->_seriallink->sendMavlinkMessage((const char*)buff, len);
-    _vehicle->my_mavlink->_mavprotocol->_udplink->sendMavlinkMessage((const char*)buff, len);
+    _vehicle->my_mavlink->sendData((const char*)buff, len);
 }
 
 void MissionController::_handleMissionItem(const mavlink_message_t &message, bool missionItemInt)

@@ -30,8 +30,6 @@ public:
     void setPlanScreenW(int W);
     void setPlanScreenH(int H);
 
-
-
     Q_INVOKABLE void delObjct(int index);
     Q_INVOKABLE void setGetx(int x);
     Q_INVOKABLE void setGety(int x);
@@ -70,7 +68,6 @@ signals:
     void PlanScreenWChanged();
     void PlanScreenHChanged();
 
-
 public slots:
     void addmissionitem();
     void insertmissionitem();
@@ -86,10 +83,8 @@ private:
     int precoordinatey;
     int currentEditItemIndex = 0;     //记录当前编辑的是哪一项
 
-
     QmlObjectListModel  _polygons;
     QmlObjectListModel  _lineModel;
-
 };
 
 #endif // POLYGONS_H

@@ -4,14 +4,15 @@ import QtLocation 5.6
 import QtPositioning 5.6
 import QtQuick.Controls 2.0
 import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
 import "./qml/toolbar"
+import "./qml/funcArea"
 
 Window {
     id:mainwindow
     width: Screen.desktopAvailableWidth-15
     height: Screen.desktopAvailableHeight-40
     visible: true
-
 
     Item {
         id: mainitem
@@ -72,10 +73,11 @@ Window {
             }
         }
         NetTool{
-            width: 340
+            width: 100
             height: 120
             anchors.bottom: topbar.bottom
             anchors.right: topbar.right
+            anchors.rightMargin: 10
         }
 
         ConnectState{
@@ -90,10 +92,19 @@ Window {
             id:datadisplay
             anchors.top: topbar.bottom
             anchors.topMargin: 15
-            anchors.bottom: mainitem.bottom
+            anchors.bottom: funcArea.top
             anchors.left: mainitem.left
             width: mainitem.width*2/9
         }
+
+        FuncArea{
+            id: funcArea
+            anchors.bottom: mainitem.bottom
+            anchors.left: mainitem.left
+            width: mainitem.width*2/9
+            height: mainitem.height/2.3 
+        }
+
         PlanView{
             id:planview
             anchors.top: topbar.bottom
@@ -103,6 +114,7 @@ Window {
             anchors.left: datadisplay.right
             width: mainitem.width*5/9
         }
+
         YawDisplay{
             id:yawdisplay
             anchors.top: topbar.bottom
@@ -111,22 +123,12 @@ Window {
             anchors.left: planview.right
             width: mainitem.width*2/9
         }
+
         Pitch_A_Roll{
             anchors.top: planview.bottom
             anchors.bottom: mainitem.bottom
             anchors.left: datadisplay.right
             anchors.right: yawdisplay.left
         }
-//        Button{
-//            id:usart_test
-//            width: 100
-//            height: 60
-//            anchors.left: datadisplay.left
-//            anchors.top: datadisplay.top
-//            text: "send"
-//            onClicked: {
-//                myPolygons.senddata()
-//            }
-//        }
     }
 }

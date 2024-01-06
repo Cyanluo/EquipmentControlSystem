@@ -10,9 +10,6 @@
 #include "src/MissionManager/missionitem.h"
 #include "QTimer"
 
-
-
-
 class MissionController :public QObject
 {
     Q_OBJECT

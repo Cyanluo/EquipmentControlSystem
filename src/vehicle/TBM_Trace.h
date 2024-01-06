@@ -31,7 +31,6 @@ public:
 
     float cuurentcoordinate_ydisappear()                      {   return coordinate_ydisappear;}
 
-
 signals:
     void coordinate_xChanged();
     void coordinate_yChanged();
@@ -39,7 +38,6 @@ signals:
     void coordinate_ydisappearChanged();
     void coordinateChanged();
     void coordinatedisappearChanged();
-
 
 private:
     float coordinate_x;
@@ -54,8 +52,6 @@ private:
     int ycount_current = 0;
     int ycount_past = 0;
     bool y_begindisappear = false ;
-
-
 };
 
 #endif // TBM_TRACE_H

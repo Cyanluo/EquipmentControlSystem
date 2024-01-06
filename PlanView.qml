@@ -11,7 +11,6 @@ Rectangle {
     property bool exist_a_path: false
     property bool afterReadWP: false
 
-
     Rectangle{
         id:planview
         anchors.fill: parent
@@ -151,13 +150,9 @@ Rectangle {
             color: "red"
         }
 
-
-
         function addindex(){
             index = index + 1
         }
-
-
 
         MouseArea{
             anchors.fill: parent
@@ -174,12 +169,12 @@ Rectangle {
                 myPolygons.setGetx(mouseX)
                 myPolygons.setGety(mouseY)
                 myPolygons.setprecoordinate(mouseX,mouseY)
-                console.log(mouseX,mouseY)
+                console.log("mouseX:", mouseX, "mouseY:", mouseY)
                 exist_a_path = true
                 if(!myPolygons.getisInsert())
                     myPolygons.setMissionitemfocus(index)
 
-                console.log(midview.width,midview.height)
+                console.log("midview.width:", midview.width, "midview.height", midview.height)
             }
         }
 
@@ -208,17 +203,6 @@ Rectangle {
                 count: index
             }
         }
-
-//        Button{
-//            id:networkTest
-//            anchors.top: planview.top
-//            anchors.left: planview.left
-//            text: "网络测试"
-//            onClicked: {//调用udp发送函数，发一段数字
-//                console.log("UDP Test")
-//                myUdpNet.udpSendData()
-//            }
-//        }
 
         Button{
             id:uplaodbutton
@@ -343,6 +327,7 @@ Rectangle {
         z:4
 
         onClicked: {
+            activeVehicle.getPlanScreenWH(midview.width,midview.height)
             showplan = false
         }
     }
@@ -364,6 +349,7 @@ Rectangle {
         z:4
 
         onClicked: {
+            myPolygons.getPlanScreenWH(midview.width,midview.height)
             showplan = true
         }
     }

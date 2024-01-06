@@ -1,5 +1,5 @@
 ﻿#include <QGuiApplication>
-//#include <QApplication>
+// #include <QApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QQuickWindow>
@@ -8,7 +8,6 @@
 #include "src/MissionManager/polygons.h"
 #include "src/vehicle/vehicle.h"
 #include "src/MissionManager/missioncontroller.h"
-#include "src/gcs_mavlink/NetworkUDP.h"
 
 int main(int argc, char *argv[])
 {
@@ -16,6 +15,9 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 #endif
     QGuiApplication app(argc, argv);
+//    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+//    QApplication app(argc, argv);
+
     Polygons polygons;
     Vehicle vehicle;
     MissionController missioncontroller(&vehicle);
@@ -30,12 +32,11 @@ int main(int argc, char *argv[])
     qmlRegisterUncreatableType<MissionController>("Object",1,0,"MissionController","Reference only");
     qmlRegisterType<TBM_Trace>("setcoord",1,0,"SettingCoordinate");
 
-
     QQmlApplicationEngine engine;
-    engine.rootContext()->setContextProperty("myPolygons",&polygons);
-    engine.rootContext()->setContextProperty("activeVehicle",&vehicle);
-    engine.rootContext()->setContextProperty("missioncontroller",&missioncontroller);
-    engine.rootContext()->setContextProperty("myUdpNet",vehicle.my_mavlink->_mavprotocol->_udplink);
+    engine.rootContext()->setContextProperty("myPolygons", &polygons);
+    engine.rootContext()->setContextProperty("activeVehicle", &vehicle);
+    engine.rootContext()->setContextProperty("missioncontroller", &missioncontroller);
+    engine.rootContext()->setContextProperty("netWorkManager", vehicle.my_mavlink);
     engine.rootContext()->setContextProperty("tbmPos",vehicle._tbmTrace);
     const QUrl url(QStringLiteral("qrc:/main.qml"));
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
@@ -54,8 +55,6 @@ int main(int argc, char *argv[])
         return -2;
     // 设置窗口为全屏
     window->showMaximized();
-
-
 
     return app.exec();
 }

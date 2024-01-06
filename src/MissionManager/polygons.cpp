@@ -31,7 +31,6 @@ int Polygons::getIndex()
 int Polygons::getMissionitemfocus()
 {
     return missionitemfocus;
-
 }
 
 void Polygons::setPlanScreenW(int W)
@@ -245,6 +244,7 @@ void Polygons::userDefineMissionSimple()
     mission->setNumber_y(y*planScreenH/100);
     mission->setPrenumber_x(prex*planScreenW/100);
     mission->setPrenumber_y(prey*planScreenH/100);
+    qDebug() << "w:" << planScreenW << "h:" << planScreenH;
     mission->setMissionindex(1);
     mission->setfocus(false);
     _polygons.append(mission);

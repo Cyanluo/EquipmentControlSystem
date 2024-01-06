@@ -48,7 +48,6 @@ Rectangle {
             rdHdCurrentY = tbmPos.coordinate_y
             connectRecLen = calLength()
             angle = rotangle()
-            console.log(angle)
             rdhdconnecttrace[connectIndex] = creatConnectObj()
             rdhdconnecttrace[connectIndex].width = connectRecLen
             rdhdconnecttrace[connectIndex].rotation = angle
@@ -59,9 +58,9 @@ Rectangle {
         addIndex++
         beginDisappear = true
         //加快消失速度
-        if(addIndex >= 14)
+        if(addIndex >= 8)
         {
-            timerInterval = 250
+            timerInterval = 270
         }
     }
 
@@ -144,7 +143,6 @@ Rectangle {
         running: beginConnectDisappear
         onTriggered: {
             deleteConnect()
-            console.log(root.width,root.height)
         }
     }
 

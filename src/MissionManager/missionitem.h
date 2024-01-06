@@ -28,8 +28,6 @@ public:
     Q_INVOKABLE void setPrenumber_x(int x);
     Q_INVOKABLE void setPrenumber_y(int y);
 
-
-
 signals:
     void number_xChanged();
     void number_yChanged();
@@ -45,10 +43,6 @@ public:
     int prenumber_x ;      //画线操作的前一点数据
     int prenumber_y ;
     bool focus = true;
-
-
 };
-
-
 
 #endif // MISSIONITEM_H

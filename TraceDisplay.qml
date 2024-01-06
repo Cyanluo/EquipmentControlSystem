@@ -180,7 +180,6 @@ Rectangle{
         function drawCoordDisappear(){
             mapCanvas.addcountpoint_D()
             //console.log("disappear", tbmPos.coordinate_xdisappear, tbmPos.coordinate_ydisappear)
-            console.log(root.width, root.height)
 
 
             //如果是第一个点
