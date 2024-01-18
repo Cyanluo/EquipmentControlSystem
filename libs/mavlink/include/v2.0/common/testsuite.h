@@ -11944,7 +11944,7 @@ static void mavlink_test_tbm_unity_interface(uint8_t system_id, uint8_t componen
         uint8_t buffer[MAVLINK_MAX_PACKET_LEN];
         uint16_t i;
     mavlink_tbm_unity_interface_t packet_in = {
-        17.0,45.0,73.0,101.0,129.0,157.0,185.0,213.0,241.0,269.0,297.0,325.0,353.0,381.0,409.0,437.0,465.0
+        17.0,45.0,73.0,101.0,129.0,157.0,185.0,213.0,241.0,269.0,297.0,325.0,353.0,381.0,409.0,437.0,465.0,493.0,521.0,549.0,577.0,605.0,633.0
     };
     mavlink_tbm_unity_interface_t packet1, packet2;
         memset(&packet1, 0, sizeof(packet1));
@@ -11965,6 +11965,12 @@ static void mavlink_test_tbm_unity_interface(uint8_t system_id, uint8_t componen
         packet1.lat = packet_in.lat;
         packet1.lon = packet_in.lon;
         packet1.alt = packet_in.alt;
+        packet1.vn = packet_in.vn;
+        packet1.ve = packet_in.ve;
+        packet1.vd = packet_in.vd;
+        packet1.xgyro = packet_in.xgyro;
+        packet1.ygyro = packet_in.ygyro;
+        packet1.zgyro = packet_in.zgyro;
         
         
 #ifdef MAVLINK_STATUS_FLAG_OUT_MAVLINK1
@@ -11979,12 +11985,12 @@ static void mavlink_test_tbm_unity_interface(uint8_t system_id, uint8_t componen
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
-    mavlink_msg_tbm_unity_interface_pack(system_id, component_id, &msg , packet1.HuiZhuanTai_Left_Length , packet1.HuiZhuanTai_Right_Length , packet1.HuiZhuanTai_Left_Angle , packet1.HuiZhuanTai_Right_Angle , packet1.HuiZhuanTai_Angle , packet1.DaBi_SiGan_Angle , packet1.DaBi_SiGan_Length , packet1.Dianji_Angle_HZT , packet1.JieGeBuShenSuo_Length , packet1.JieGeTou_Rot_Speed , packet1.HouTuiCheng_Angle , packet1.roll , packet1.pitch , packet1.yaw , packet1.lat , packet1.lon , packet1.alt );
+    mavlink_msg_tbm_unity_interface_pack(system_id, component_id, &msg , packet1.HuiZhuanTai_Left_Length , packet1.HuiZhuanTai_Right_Length , packet1.HuiZhuanTai_Left_Angle , packet1.HuiZhuanTai_Right_Angle , packet1.HuiZhuanTai_Angle , packet1.DaBi_SiGan_Angle , packet1.DaBi_SiGan_Length , packet1.Dianji_Angle_HZT , packet1.JieGeBuShenSuo_Length , packet1.JieGeTou_Rot_Speed , packet1.HouTuiCheng_Angle , packet1.roll , packet1.pitch , packet1.yaw , packet1.lat , packet1.lon , packet1.alt , packet1.vn , packet1.ve , packet1.vd , packet1.xgyro , packet1.ygyro , packet1.zgyro );
     mavlink_msg_tbm_unity_interface_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
         memset(&packet2, 0, sizeof(packet2));
-    mavlink_msg_tbm_unity_interface_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.HuiZhuanTai_Left_Length , packet1.HuiZhuanTai_Right_Length , packet1.HuiZhuanTai_Left_Angle , packet1.HuiZhuanTai_Right_Angle , packet1.HuiZhuanTai_Angle , packet1.DaBi_SiGan_Angle , packet1.DaBi_SiGan_Length , packet1.Dianji_Angle_HZT , packet1.JieGeBuShenSuo_Length , packet1.JieGeTou_Rot_Speed , packet1.HouTuiCheng_Angle , packet1.roll , packet1.pitch , packet1.yaw , packet1.lat , packet1.lon , packet1.alt );
+    mavlink_msg_tbm_unity_interface_pack_chan(system_id, component_id, MAVLINK_COMM_0, &msg , packet1.HuiZhuanTai_Left_Length , packet1.HuiZhuanTai_Right_Length , packet1.HuiZhuanTai_Left_Angle , packet1.HuiZhuanTai_Right_Angle , packet1.HuiZhuanTai_Angle , packet1.DaBi_SiGan_Angle , packet1.DaBi_SiGan_Length , packet1.Dianji_Angle_HZT , packet1.JieGeBuShenSuo_Length , packet1.JieGeTou_Rot_Speed , packet1.HouTuiCheng_Angle , packet1.roll , packet1.pitch , packet1.yaw , packet1.lat , packet1.lon , packet1.alt , packet1.vn , packet1.ve , packet1.vd , packet1.xgyro , packet1.ygyro , packet1.zgyro );
     mavlink_msg_tbm_unity_interface_decode(&msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 
@@ -11997,7 +12003,7 @@ static void mavlink_test_tbm_unity_interface(uint8_t system_id, uint8_t componen
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
         
         memset(&packet2, 0, sizeof(packet2));
-    mavlink_msg_tbm_unity_interface_send(MAVLINK_COMM_1 , packet1.HuiZhuanTai_Left_Length , packet1.HuiZhuanTai_Right_Length , packet1.HuiZhuanTai_Left_Angle , packet1.HuiZhuanTai_Right_Angle , packet1.HuiZhuanTai_Angle , packet1.DaBi_SiGan_Angle , packet1.DaBi_SiGan_Length , packet1.Dianji_Angle_HZT , packet1.JieGeBuShenSuo_Length , packet1.JieGeTou_Rot_Speed , packet1.HouTuiCheng_Angle , packet1.roll , packet1.pitch , packet1.yaw , packet1.lat , packet1.lon , packet1.alt );
+    mavlink_msg_tbm_unity_interface_send(MAVLINK_COMM_1 , packet1.HuiZhuanTai_Left_Length , packet1.HuiZhuanTai_Right_Length , packet1.HuiZhuanTai_Left_Angle , packet1.HuiZhuanTai_Right_Angle , packet1.HuiZhuanTai_Angle , packet1.DaBi_SiGan_Angle , packet1.DaBi_SiGan_Length , packet1.Dianji_Angle_HZT , packet1.JieGeBuShenSuo_Length , packet1.JieGeTou_Rot_Speed , packet1.HouTuiCheng_Angle , packet1.roll , packet1.pitch , packet1.yaw , packet1.lat , packet1.lon , packet1.alt , packet1.vn , packet1.ve , packet1.vd , packet1.xgyro , packet1.ygyro , packet1.zgyro );
     mavlink_msg_tbm_unity_interface_decode(last_msg, &packet2);
         MAVLINK_ASSERT(memcmp(&packet1, &packet2, sizeof(packet1)) == 0);
 

@@ -22,15 +22,21 @@ typedef struct __mavlink_tbm_unity_interface_t {
  float lat; /*< [deg] Latitude*1e7*/
  float lon; /*< [deg] Longitude*1e7*/
  float alt; /*< [m] Altitude*/
+ float vn; /*< [m/s] True velocity in north direction in earth-fixed NED frame*/
+ float ve; /*< [m/s] True velocity in east direction in earth-fixed NED frame*/
+ float vd; /*< [m/s] True velocity in down direction in earth-fixed NED frame*/
+ float xgyro; /*< [rad/s] Angular speed around X axis*/
+ float ygyro; /*< [rad/s] Angular speed around Y axis*/
+ float zgyro; /*< [rad/s] Angular speed around Z axis*/
 } mavlink_tbm_unity_interface_t;
 
-#define MAVLINK_MSG_ID_TBM_UNITY_INTERFACE_LEN 68
-#define MAVLINK_MSG_ID_TBM_UNITY_INTERFACE_MIN_LEN 68
-#define MAVLINK_MSG_ID_602_LEN 68
-#define MAVLINK_MSG_ID_602_MIN_LEN 68
+#define MAVLINK_MSG_ID_TBM_UNITY_INTERFACE_LEN 92
+#define MAVLINK_MSG_ID_TBM_UNITY_INTERFACE_MIN_LEN 92
+#define MAVLINK_MSG_ID_602_LEN 92
+#define MAVLINK_MSG_ID_602_MIN_LEN 92
 
-#define MAVLINK_MSG_ID_TBM_UNITY_INTERFACE_CRC 127
-#define MAVLINK_MSG_ID_602_CRC 127
+#define MAVLINK_MSG_ID_TBM_UNITY_INTERFACE_CRC 58
+#define MAVLINK_MSG_ID_602_CRC 58
 
 
 
@@ -38,7 +44,7 @@ typedef struct __mavlink_tbm_unity_interface_t {
 #define MAVLINK_MESSAGE_INFO_TBM_UNITY_INTERFACE { \
     602, \
     "TBM_UNITY_INTERFACE", \
-    17, \
+    23, \
     {  { "HuiZhuanTai_Left_Length", NULL, MAVLINK_TYPE_FLOAT, 0, 0, offsetof(mavlink_tbm_unity_interface_t, HuiZhuanTai_Left_Length) }, \
          { "HuiZhuanTai_Right_Length", NULL, MAVLINK_TYPE_FLOAT, 0, 4, offsetof(mavlink_tbm_unity_interface_t, HuiZhuanTai_Right_Length) }, \
          { "HuiZhuanTai_Left_Angle", NULL, MAVLINK_TYPE_FLOAT, 0, 8, offsetof(mavlink_tbm_unity_interface_t, HuiZhuanTai_Left_Angle) }, \
@@ -56,12 +62,18 @@ typedef struct __mavlink_tbm_unity_interface_t {
          { "lat", NULL, MAVLINK_TYPE_FLOAT, 0, 56, offsetof(mavlink_tbm_unity_interface_t, lat) }, \
          { "lon", NULL, MAVLINK_TYPE_FLOAT, 0, 60, offsetof(mavlink_tbm_unity_interface_t, lon) }, \
          { "alt", NULL, MAVLINK_TYPE_FLOAT, 0, 64, offsetof(mavlink_tbm_unity_interface_t, alt) }, \
+         { "vn", NULL, MAVLINK_TYPE_FLOAT, 0, 68, offsetof(mavlink_tbm_unity_interface_t, vn) }, \
+         { "ve", NULL, MAVLINK_TYPE_FLOAT, 0, 72, offsetof(mavlink_tbm_unity_interface_t, ve) }, \
+         { "vd", NULL, MAVLINK_TYPE_FLOAT, 0, 76, offsetof(mavlink_tbm_unity_interface_t, vd) }, \
+         { "xgyro", NULL, MAVLINK_TYPE_FLOAT, 0, 80, offsetof(mavlink_tbm_unity_interface_t, xgyro) }, \
+         { "ygyro", NULL, MAVLINK_TYPE_FLOAT, 0, 84, offsetof(mavlink_tbm_unity_interface_t, ygyro) }, \
+         { "zgyro", NULL, MAVLINK_TYPE_FLOAT, 0, 88, offsetof(mavlink_tbm_unity_interface_t, zgyro) }, \
          } \
 }
 #else
 #define MAVLINK_MESSAGE_INFO_TBM_UNITY_INTERFACE { \
     "TBM_UNITY_INTERFACE", \
-    17, \
+    23, \
     {  { "HuiZhuanTai_Left_Length", NULL, MAVLINK_TYPE_FLOAT, 0, 0, offsetof(mavlink_tbm_unity_interface_t, HuiZhuanTai_Left_Length) }, \
          { "HuiZhuanTai_Right_Length", NULL, MAVLINK_TYPE_FLOAT, 0, 4, offsetof(mavlink_tbm_unity_interface_t, HuiZhuanTai_Right_Length) }, \
          { "HuiZhuanTai_Left_Angle", NULL, MAVLINK_TYPE_FLOAT, 0, 8, offsetof(mavlink_tbm_unity_interface_t, HuiZhuanTai_Left_Angle) }, \
@@ -79,6 +91,12 @@ typedef struct __mavlink_tbm_unity_interface_t {
          { "lat", NULL, MAVLINK_TYPE_FLOAT, 0, 56, offsetof(mavlink_tbm_unity_interface_t, lat) }, \
          { "lon", NULL, MAVLINK_TYPE_FLOAT, 0, 60, offsetof(mavlink_tbm_unity_interface_t, lon) }, \
          { "alt", NULL, MAVLINK_TYPE_FLOAT, 0, 64, offsetof(mavlink_tbm_unity_interface_t, alt) }, \
+         { "vn", NULL, MAVLINK_TYPE_FLOAT, 0, 68, offsetof(mavlink_tbm_unity_interface_t, vn) }, \
+         { "ve", NULL, MAVLINK_TYPE_FLOAT, 0, 72, offsetof(mavlink_tbm_unity_interface_t, ve) }, \
+         { "vd", NULL, MAVLINK_TYPE_FLOAT, 0, 76, offsetof(mavlink_tbm_unity_interface_t, vd) }, \
+         { "xgyro", NULL, MAVLINK_TYPE_FLOAT, 0, 80, offsetof(mavlink_tbm_unity_interface_t, xgyro) }, \
+         { "ygyro", NULL, MAVLINK_TYPE_FLOAT, 0, 84, offsetof(mavlink_tbm_unity_interface_t, ygyro) }, \
+         { "zgyro", NULL, MAVLINK_TYPE_FLOAT, 0, 88, offsetof(mavlink_tbm_unity_interface_t, zgyro) }, \
          } \
 }
 #endif
@@ -106,10 +124,16 @@ typedef struct __mavlink_tbm_unity_interface_t {
  * @param lat [deg] Latitude*1e7
  * @param lon [deg] Longitude*1e7
  * @param alt [m] Altitude
+ * @param vn [m/s] True velocity in north direction in earth-fixed NED frame
+ * @param ve [m/s] True velocity in east direction in earth-fixed NED frame
+ * @param vd [m/s] True velocity in down direction in earth-fixed NED frame
+ * @param xgyro [rad/s] Angular speed around X axis
+ * @param ygyro [rad/s] Angular speed around Y axis
+ * @param zgyro [rad/s] Angular speed around Z axis
  * @return length of the message in bytes (excluding serial stream start sign)
  */
 static inline uint16_t mavlink_msg_tbm_unity_interface_pack(uint8_t system_id, uint8_t component_id, mavlink_message_t* msg,
-                               float HuiZhuanTai_Left_Length, float HuiZhuanTai_Right_Length, float HuiZhuanTai_Left_Angle, float HuiZhuanTai_Right_Angle, float HuiZhuanTai_Angle, float DaBi_SiGan_Angle, float DaBi_SiGan_Length, float Dianji_Angle_HZT, float JieGeBuShenSuo_Length, float JieGeTou_Rot_Speed, float HouTuiCheng_Angle, float roll, float pitch, float yaw, float lat, float lon, float alt)
+                               float HuiZhuanTai_Left_Length, float HuiZhuanTai_Right_Length, float HuiZhuanTai_Left_Angle, float HuiZhuanTai_Right_Angle, float HuiZhuanTai_Angle, float DaBi_SiGan_Angle, float DaBi_SiGan_Length, float Dianji_Angle_HZT, float JieGeBuShenSuo_Length, float JieGeTou_Rot_Speed, float HouTuiCheng_Angle, float roll, float pitch, float yaw, float lat, float lon, float alt, float vn, float ve, float vd, float xgyro, float ygyro, float zgyro)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
     char buf[MAVLINK_MSG_ID_TBM_UNITY_INTERFACE_LEN];
@@ -130,6 +154,12 @@ static inline uint16_t mavlink_msg_tbm_unity_interface_pack(uint8_t system_id, u
     _mav_put_float(buf, 56, lat);
     _mav_put_float(buf, 60, lon);
     _mav_put_float(buf, 64, alt);
+    _mav_put_float(buf, 68, vn);
+    _mav_put_float(buf, 72, ve);
+    _mav_put_float(buf, 76, vd);
+    _mav_put_float(buf, 80, xgyro);
+    _mav_put_float(buf, 84, ygyro);
+    _mav_put_float(buf, 88, zgyro);
 
         memcpy(_MAV_PAYLOAD_NON_CONST(msg), buf, MAVLINK_MSG_ID_TBM_UNITY_INTERFACE_LEN);
 #else
@@ -151,6 +181,12 @@ static inline uint16_t mavlink_msg_tbm_unity_interface_pack(uint8_t system_id, u
     packet.lat = lat;
     packet.lon = lon;
     packet.alt = alt;
+    packet.vn = vn;
+    packet.ve = ve;
+    packet.vd = vd;
+    packet.xgyro = xgyro;
+    packet.ygyro = ygyro;
+    packet.zgyro = zgyro;
 
         memcpy(_MAV_PAYLOAD_NON_CONST(msg), &packet, MAVLINK_MSG_ID_TBM_UNITY_INTERFACE_LEN);
 #endif
@@ -182,11 +218,17 @@ static inline uint16_t mavlink_msg_tbm_unity_interface_pack(uint8_t system_id, u
  * @param lat [deg] Latitude*1e7
  * @param lon [deg] Longitude*1e7
  * @param alt [m] Altitude
+ * @param vn [m/s] True velocity in north direction in earth-fixed NED frame
+ * @param ve [m/s] True velocity in east direction in earth-fixed NED frame
+ * @param vd [m/s] True velocity in down direction in earth-fixed NED frame
+ * @param xgyro [rad/s] Angular speed around X axis
+ * @param ygyro [rad/s] Angular speed around Y axis
+ * @param zgyro [rad/s] Angular speed around Z axis
  * @return length of the message in bytes (excluding serial stream start sign)
  */
 static inline uint16_t mavlink_msg_tbm_unity_interface_pack_chan(uint8_t system_id, uint8_t component_id, uint8_t chan,
                                mavlink_message_t* msg,
-                                   float HuiZhuanTai_Left_Length,float HuiZhuanTai_Right_Length,float HuiZhuanTai_Left_Angle,float HuiZhuanTai_Right_Angle,float HuiZhuanTai_Angle,float DaBi_SiGan_Angle,float DaBi_SiGan_Length,float Dianji_Angle_HZT,float JieGeBuShenSuo_Length,float JieGeTou_Rot_Speed,float HouTuiCheng_Angle,float roll,float pitch,float yaw,float lat,float lon,float alt)
+                                   float HuiZhuanTai_Left_Length,float HuiZhuanTai_Right_Length,float HuiZhuanTai_Left_Angle,float HuiZhuanTai_Right_Angle,float HuiZhuanTai_Angle,float DaBi_SiGan_Angle,float DaBi_SiGan_Length,float Dianji_Angle_HZT,float JieGeBuShenSuo_Length,float JieGeTou_Rot_Speed,float HouTuiCheng_Angle,float roll,float pitch,float yaw,float lat,float lon,float alt,float vn,float ve,float vd,float xgyro,float ygyro,float zgyro)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
     char buf[MAVLINK_MSG_ID_TBM_UNITY_INTERFACE_LEN];
@@ -207,6 +249,12 @@ static inline uint16_t mavlink_msg_tbm_unity_interface_pack_chan(uint8_t system_
     _mav_put_float(buf, 56, lat);
     _mav_put_float(buf, 60, lon);
     _mav_put_float(buf, 64, alt);
+    _mav_put_float(buf, 68, vn);
+    _mav_put_float(buf, 72, ve);
+    _mav_put_float(buf, 76, vd);
+    _mav_put_float(buf, 80, xgyro);
+    _mav_put_float(buf, 84, ygyro);
+    _mav_put_float(buf, 88, zgyro);
 
         memcpy(_MAV_PAYLOAD_NON_CONST(msg), buf, MAVLINK_MSG_ID_TBM_UNITY_INTERFACE_LEN);
 #else
@@ -228,6 +276,12 @@ static inline uint16_t mavlink_msg_tbm_unity_interface_pack_chan(uint8_t system_
     packet.lat = lat;
     packet.lon = lon;
     packet.alt = alt;
+    packet.vn = vn;
+    packet.ve = ve;
+    packet.vd = vd;
+    packet.xgyro = xgyro;
+    packet.ygyro = ygyro;
+    packet.zgyro = zgyro;
 
         memcpy(_MAV_PAYLOAD_NON_CONST(msg), &packet, MAVLINK_MSG_ID_TBM_UNITY_INTERFACE_LEN);
 #endif
@@ -246,7 +300,7 @@ static inline uint16_t mavlink_msg_tbm_unity_interface_pack_chan(uint8_t system_
  */
 static inline uint16_t mavlink_msg_tbm_unity_interface_encode(uint8_t system_id, uint8_t component_id, mavlink_message_t* msg, const mavlink_tbm_unity_interface_t* tbm_unity_interface)
 {
-    return mavlink_msg_tbm_unity_interface_pack(system_id, component_id, msg, tbm_unity_interface->HuiZhuanTai_Left_Length, tbm_unity_interface->HuiZhuanTai_Right_Length, tbm_unity_interface->HuiZhuanTai_Left_Angle, tbm_unity_interface->HuiZhuanTai_Right_Angle, tbm_unity_interface->HuiZhuanTai_Angle, tbm_unity_interface->DaBi_SiGan_Angle, tbm_unity_interface->DaBi_SiGan_Length, tbm_unity_interface->Dianji_Angle_HZT, tbm_unity_interface->JieGeBuShenSuo_Length, tbm_unity_interface->JieGeTou_Rot_Speed, tbm_unity_interface->HouTuiCheng_Angle, tbm_unity_interface->roll, tbm_unity_interface->pitch, tbm_unity_interface->yaw, tbm_unity_interface->lat, tbm_unity_interface->lon, tbm_unity_interface->alt);
+    return mavlink_msg_tbm_unity_interface_pack(system_id, component_id, msg, tbm_unity_interface->HuiZhuanTai_Left_Length, tbm_unity_interface->HuiZhuanTai_Right_Length, tbm_unity_interface->HuiZhuanTai_Left_Angle, tbm_unity_interface->HuiZhuanTai_Right_Angle, tbm_unity_interface->HuiZhuanTai_Angle, tbm_unity_interface->DaBi_SiGan_Angle, tbm_unity_interface->DaBi_SiGan_Length, tbm_unity_interface->Dianji_Angle_HZT, tbm_unity_interface->JieGeBuShenSuo_Length, tbm_unity_interface->JieGeTou_Rot_Speed, tbm_unity_interface->HouTuiCheng_Angle, tbm_unity_interface->roll, tbm_unity_interface->pitch, tbm_unity_interface->yaw, tbm_unity_interface->lat, tbm_unity_interface->lon, tbm_unity_interface->alt, tbm_unity_interface->vn, tbm_unity_interface->ve, tbm_unity_interface->vd, tbm_unity_interface->xgyro, tbm_unity_interface->ygyro, tbm_unity_interface->zgyro);
 }
 
 /**
@@ -260,7 +314,7 @@ static inline uint16_t mavlink_msg_tbm_unity_interface_encode(uint8_t system_id,
  */
 static inline uint16_t mavlink_msg_tbm_unity_interface_encode_chan(uint8_t system_id, uint8_t component_id, uint8_t chan, mavlink_message_t* msg, const mavlink_tbm_unity_interface_t* tbm_unity_interface)
 {
-    return mavlink_msg_tbm_unity_interface_pack_chan(system_id, component_id, chan, msg, tbm_unity_interface->HuiZhuanTai_Left_Length, tbm_unity_interface->HuiZhuanTai_Right_Length, tbm_unity_interface->HuiZhuanTai_Left_Angle, tbm_unity_interface->HuiZhuanTai_Right_Angle, tbm_unity_interface->HuiZhuanTai_Angle, tbm_unity_interface->DaBi_SiGan_Angle, tbm_unity_interface->DaBi_SiGan_Length, tbm_unity_interface->Dianji_Angle_HZT, tbm_unity_interface->JieGeBuShenSuo_Length, tbm_unity_interface->JieGeTou_Rot_Speed, tbm_unity_interface->HouTuiCheng_Angle, tbm_unity_interface->roll, tbm_unity_interface->pitch, tbm_unity_interface->yaw, tbm_unity_interface->lat, tbm_unity_interface->lon, tbm_unity_interface->alt);
+    return mavlink_msg_tbm_unity_interface_pack_chan(system_id, component_id, chan, msg, tbm_unity_interface->HuiZhuanTai_Left_Length, tbm_unity_interface->HuiZhuanTai_Right_Length, tbm_unity_interface->HuiZhuanTai_Left_Angle, tbm_unity_interface->HuiZhuanTai_Right_Angle, tbm_unity_interface->HuiZhuanTai_Angle, tbm_unity_interface->DaBi_SiGan_Angle, tbm_unity_interface->DaBi_SiGan_Length, tbm_unity_interface->Dianji_Angle_HZT, tbm_unity_interface->JieGeBuShenSuo_Length, tbm_unity_interface->JieGeTou_Rot_Speed, tbm_unity_interface->HouTuiCheng_Angle, tbm_unity_interface->roll, tbm_unity_interface->pitch, tbm_unity_interface->yaw, tbm_unity_interface->lat, tbm_unity_interface->lon, tbm_unity_interface->alt, tbm_unity_interface->vn, tbm_unity_interface->ve, tbm_unity_interface->vd, tbm_unity_interface->xgyro, tbm_unity_interface->ygyro, tbm_unity_interface->zgyro);
 }
 
 /**
@@ -284,10 +338,16 @@ static inline uint16_t mavlink_msg_tbm_unity_interface_encode_chan(uint8_t syste
  * @param lat [deg] Latitude*1e7
  * @param lon [deg] Longitude*1e7
  * @param alt [m] Altitude
+ * @param vn [m/s] True velocity in north direction in earth-fixed NED frame
+ * @param ve [m/s] True velocity in east direction in earth-fixed NED frame
+ * @param vd [m/s] True velocity in down direction in earth-fixed NED frame
+ * @param xgyro [rad/s] Angular speed around X axis
+ * @param ygyro [rad/s] Angular speed around Y axis
+ * @param zgyro [rad/s] Angular speed around Z axis
  */
 #ifdef MAVLINK_USE_CONVENIENCE_FUNCTIONS
 
-static inline void mavlink_msg_tbm_unity_interface_send(mavlink_channel_t chan, float HuiZhuanTai_Left_Length, float HuiZhuanTai_Right_Length, float HuiZhuanTai_Left_Angle, float HuiZhuanTai_Right_Angle, float HuiZhuanTai_Angle, float DaBi_SiGan_Angle, float DaBi_SiGan_Length, float Dianji_Angle_HZT, float JieGeBuShenSuo_Length, float JieGeTou_Rot_Speed, float HouTuiCheng_Angle, float roll, float pitch, float yaw, float lat, float lon, float alt)
+static inline void mavlink_msg_tbm_unity_interface_send(mavlink_channel_t chan, float HuiZhuanTai_Left_Length, float HuiZhuanTai_Right_Length, float HuiZhuanTai_Left_Angle, float HuiZhuanTai_Right_Angle, float HuiZhuanTai_Angle, float DaBi_SiGan_Angle, float DaBi_SiGan_Length, float Dianji_Angle_HZT, float JieGeBuShenSuo_Length, float JieGeTou_Rot_Speed, float HouTuiCheng_Angle, float roll, float pitch, float yaw, float lat, float lon, float alt, float vn, float ve, float vd, float xgyro, float ygyro, float zgyro)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
     char buf[MAVLINK_MSG_ID_TBM_UNITY_INTERFACE_LEN];
@@ -308,6 +368,12 @@ static inline void mavlink_msg_tbm_unity_interface_send(mavlink_channel_t chan, 
     _mav_put_float(buf, 56, lat);
     _mav_put_float(buf, 60, lon);
     _mav_put_float(buf, 64, alt);
+    _mav_put_float(buf, 68, vn);
+    _mav_put_float(buf, 72, ve);
+    _mav_put_float(buf, 76, vd);
+    _mav_put_float(buf, 80, xgyro);
+    _mav_put_float(buf, 84, ygyro);
+    _mav_put_float(buf, 88, zgyro);
 
     _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_TBM_UNITY_INTERFACE, buf, MAVLINK_MSG_ID_TBM_UNITY_INTERFACE_MIN_LEN, MAVLINK_MSG_ID_TBM_UNITY_INTERFACE_LEN, MAVLINK_MSG_ID_TBM_UNITY_INTERFACE_CRC);
 #else
@@ -329,6 +395,12 @@ static inline void mavlink_msg_tbm_unity_interface_send(mavlink_channel_t chan, 
     packet.lat = lat;
     packet.lon = lon;
     packet.alt = alt;
+    packet.vn = vn;
+    packet.ve = ve;
+    packet.vd = vd;
+    packet.xgyro = xgyro;
+    packet.ygyro = ygyro;
+    packet.zgyro = zgyro;
 
     _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_TBM_UNITY_INTERFACE, (const char *)&packet, MAVLINK_MSG_ID_TBM_UNITY_INTERFACE_MIN_LEN, MAVLINK_MSG_ID_TBM_UNITY_INTERFACE_LEN, MAVLINK_MSG_ID_TBM_UNITY_INTERFACE_CRC);
 #endif
@@ -342,7 +414,7 @@ static inline void mavlink_msg_tbm_unity_interface_send(mavlink_channel_t chan, 
 static inline void mavlink_msg_tbm_unity_interface_send_struct(mavlink_channel_t chan, const mavlink_tbm_unity_interface_t* tbm_unity_interface)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
-    mavlink_msg_tbm_unity_interface_send(chan, tbm_unity_interface->HuiZhuanTai_Left_Length, tbm_unity_interface->HuiZhuanTai_Right_Length, tbm_unity_interface->HuiZhuanTai_Left_Angle, tbm_unity_interface->HuiZhuanTai_Right_Angle, tbm_unity_interface->HuiZhuanTai_Angle, tbm_unity_interface->DaBi_SiGan_Angle, tbm_unity_interface->DaBi_SiGan_Length, tbm_unity_interface->Dianji_Angle_HZT, tbm_unity_interface->JieGeBuShenSuo_Length, tbm_unity_interface->JieGeTou_Rot_Speed, tbm_unity_interface->HouTuiCheng_Angle, tbm_unity_interface->roll, tbm_unity_interface->pitch, tbm_unity_interface->yaw, tbm_unity_interface->lat, tbm_unity_interface->lon, tbm_unity_interface->alt);
+    mavlink_msg_tbm_unity_interface_send(chan, tbm_unity_interface->HuiZhuanTai_Left_Length, tbm_unity_interface->HuiZhuanTai_Right_Length, tbm_unity_interface->HuiZhuanTai_Left_Angle, tbm_unity_interface->HuiZhuanTai_Right_Angle, tbm_unity_interface->HuiZhuanTai_Angle, tbm_unity_interface->DaBi_SiGan_Angle, tbm_unity_interface->DaBi_SiGan_Length, tbm_unity_interface->Dianji_Angle_HZT, tbm_unity_interface->JieGeBuShenSuo_Length, tbm_unity_interface->JieGeTou_Rot_Speed, tbm_unity_interface->HouTuiCheng_Angle, tbm_unity_interface->roll, tbm_unity_interface->pitch, tbm_unity_interface->yaw, tbm_unity_interface->lat, tbm_unity_interface->lon, tbm_unity_interface->alt, tbm_unity_interface->vn, tbm_unity_interface->ve, tbm_unity_interface->vd, tbm_unity_interface->xgyro, tbm_unity_interface->ygyro, tbm_unity_interface->zgyro);
 #else
     _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_TBM_UNITY_INTERFACE, (const char *)tbm_unity_interface, MAVLINK_MSG_ID_TBM_UNITY_INTERFACE_MIN_LEN, MAVLINK_MSG_ID_TBM_UNITY_INTERFACE_LEN, MAVLINK_MSG_ID_TBM_UNITY_INTERFACE_CRC);
 #endif
@@ -356,7 +428,7 @@ static inline void mavlink_msg_tbm_unity_interface_send_struct(mavlink_channel_t
   is usually the receive buffer for the channel, and allows a reply to an
   incoming message with minimum stack space usage.
  */
-static inline void mavlink_msg_tbm_unity_interface_send_buf(mavlink_message_t *msgbuf, mavlink_channel_t chan,  float HuiZhuanTai_Left_Length, float HuiZhuanTai_Right_Length, float HuiZhuanTai_Left_Angle, float HuiZhuanTai_Right_Angle, float HuiZhuanTai_Angle, float DaBi_SiGan_Angle, float DaBi_SiGan_Length, float Dianji_Angle_HZT, float JieGeBuShenSuo_Length, float JieGeTou_Rot_Speed, float HouTuiCheng_Angle, float roll, float pitch, float yaw, float lat, float lon, float alt)
+static inline void mavlink_msg_tbm_unity_interface_send_buf(mavlink_message_t *msgbuf, mavlink_channel_t chan,  float HuiZhuanTai_Left_Length, float HuiZhuanTai_Right_Length, float HuiZhuanTai_Left_Angle, float HuiZhuanTai_Right_Angle, float HuiZhuanTai_Angle, float DaBi_SiGan_Angle, float DaBi_SiGan_Length, float Dianji_Angle_HZT, float JieGeBuShenSuo_Length, float JieGeTou_Rot_Speed, float HouTuiCheng_Angle, float roll, float pitch, float yaw, float lat, float lon, float alt, float vn, float ve, float vd, float xgyro, float ygyro, float zgyro)
 {
 #if MAVLINK_NEED_BYTE_SWAP || !MAVLINK_ALIGNED_FIELDS
     char *buf = (char *)msgbuf;
@@ -377,6 +449,12 @@ static inline void mavlink_msg_tbm_unity_interface_send_buf(mavlink_message_t *m
     _mav_put_float(buf, 56, lat);
     _mav_put_float(buf, 60, lon);
     _mav_put_float(buf, 64, alt);
+    _mav_put_float(buf, 68, vn);
+    _mav_put_float(buf, 72, ve);
+    _mav_put_float(buf, 76, vd);
+    _mav_put_float(buf, 80, xgyro);
+    _mav_put_float(buf, 84, ygyro);
+    _mav_put_float(buf, 88, zgyro);
 
     _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_TBM_UNITY_INTERFACE, buf, MAVLINK_MSG_ID_TBM_UNITY_INTERFACE_MIN_LEN, MAVLINK_MSG_ID_TBM_UNITY_INTERFACE_LEN, MAVLINK_MSG_ID_TBM_UNITY_INTERFACE_CRC);
 #else
@@ -398,6 +476,12 @@ static inline void mavlink_msg_tbm_unity_interface_send_buf(mavlink_message_t *m
     packet->lat = lat;
     packet->lon = lon;
     packet->alt = alt;
+    packet->vn = vn;
+    packet->ve = ve;
+    packet->vd = vd;
+    packet->xgyro = xgyro;
+    packet->ygyro = ygyro;
+    packet->zgyro = zgyro;
 
     _mav_finalize_message_chan_send(chan, MAVLINK_MSG_ID_TBM_UNITY_INTERFACE, (const char *)packet, MAVLINK_MSG_ID_TBM_UNITY_INTERFACE_MIN_LEN, MAVLINK_MSG_ID_TBM_UNITY_INTERFACE_LEN, MAVLINK_MSG_ID_TBM_UNITY_INTERFACE_CRC);
 #endif
@@ -580,6 +664,66 @@ static inline float mavlink_msg_tbm_unity_interface_get_alt(const mavlink_messag
 }
 
 /**
+ * @brief Get field vn from tbm_unity_interface message
+ *
+ * @return [m/s] True velocity in north direction in earth-fixed NED frame
+ */
+static inline float mavlink_msg_tbm_unity_interface_get_vn(const mavlink_message_t* msg)
+{
+    return _MAV_RETURN_float(msg,  68);
+}
+
+/**
+ * @brief Get field ve from tbm_unity_interface message
+ *
+ * @return [m/s] True velocity in east direction in earth-fixed NED frame
+ */
+static inline float mavlink_msg_tbm_unity_interface_get_ve(const mavlink_message_t* msg)
+{
+    return _MAV_RETURN_float(msg,  72);
+}
+
+/**
+ * @brief Get field vd from tbm_unity_interface message
+ *
+ * @return [m/s] True velocity in down direction in earth-fixed NED frame
+ */
+static inline float mavlink_msg_tbm_unity_interface_get_vd(const mavlink_message_t* msg)
+{
+    return _MAV_RETURN_float(msg,  76);
+}
+
+/**
+ * @brief Get field xgyro from tbm_unity_interface message
+ *
+ * @return [rad/s] Angular speed around X axis
+ */
+static inline float mavlink_msg_tbm_unity_interface_get_xgyro(const mavlink_message_t* msg)
+{
+    return _MAV_RETURN_float(msg,  80);
+}
+
+/**
+ * @brief Get field ygyro from tbm_unity_interface message
+ *
+ * @return [rad/s] Angular speed around Y axis
+ */
+static inline float mavlink_msg_tbm_unity_interface_get_ygyro(const mavlink_message_t* msg)
+{
+    return _MAV_RETURN_float(msg,  84);
+}
+
+/**
+ * @brief Get field zgyro from tbm_unity_interface message
+ *
+ * @return [rad/s] Angular speed around Z axis
+ */
+static inline float mavlink_msg_tbm_unity_interface_get_zgyro(const mavlink_message_t* msg)
+{
+    return _MAV_RETURN_float(msg,  88);
+}
+
+/**
  * @brief Decode a tbm_unity_interface message into a struct
  *
  * @param msg The message to decode
@@ -605,6 +749,12 @@ static inline void mavlink_msg_tbm_unity_interface_decode(const mavlink_message_
     tbm_unity_interface->lat = mavlink_msg_tbm_unity_interface_get_lat(msg);
     tbm_unity_interface->lon = mavlink_msg_tbm_unity_interface_get_lon(msg);
     tbm_unity_interface->alt = mavlink_msg_tbm_unity_interface_get_alt(msg);
+    tbm_unity_interface->vn = mavlink_msg_tbm_unity_interface_get_vn(msg);
+    tbm_unity_interface->ve = mavlink_msg_tbm_unity_interface_get_ve(msg);
+    tbm_unity_interface->vd = mavlink_msg_tbm_unity_interface_get_vd(msg);
+    tbm_unity_interface->xgyro = mavlink_msg_tbm_unity_interface_get_xgyro(msg);
+    tbm_unity_interface->ygyro = mavlink_msg_tbm_unity_interface_get_ygyro(msg);
+    tbm_unity_interface->zgyro = mavlink_msg_tbm_unity_interface_get_zgyro(msg);
 #else
         uint8_t len = msg->len < MAVLINK_MSG_ID_TBM_UNITY_INTERFACE_LEN? msg->len : MAVLINK_MSG_ID_TBM_UNITY_INTERFACE_LEN;
         memset(tbm_unity_interface, 0, MAVLINK_MSG_ID_TBM_UNITY_INTERFACE_LEN);
