@@ -1,6 +1,8 @@
 ﻿import QtQuick 2.15
 import QtQuick.Controls 2.5
 import QtQuick.Window 2.0
+
+import EquitmentControl     1.0
 import "./qml/traceDisplay/"
 
 Rectangle {
@@ -160,26 +162,26 @@ Rectangle {
                 if(afterReadWP)
                 {
                     //读当前的航点index
-                    index = myPolygons.getNowIndex()
+                    index = EquitmentControl.missionController.polygons.getNowIndex()
                     afterReadWP = false
                 }
                 planview.addindex()
-                myPolygons.getPlanScreenWH(midview.width,midview.height)
-                myPolygons.setIndex(index)
-                myPolygons.setGetx(mouseX)
-                myPolygons.setGety(mouseY)
-                myPolygons.setprecoordinate(mouseX,mouseY)
+                EquitmentControl.missionController.polygons.getPlanScreenWH(midview.width,midview.height)
+                EquitmentControl.missionController.polygons.setIndex(index)
+                EquitmentControl.missionController.polygons.setGetx(mouseX)
+                EquitmentControl.missionController.polygons.setGety(mouseY)
+                EquitmentControl.missionController.polygons.setprecoordinate(mouseX,mouseY)
                 console.log("mouseX:", mouseX, "mouseY:", mouseY)
                 exist_a_path = true
-                if(!myPolygons.getisInsert())
-                    myPolygons.setMissionitemfocus(index)
+                if(!EquitmentControl.missionController.polygons.getisInsert())
+                    EquitmentControl.missionController.polygons.setMissionitemfocus(index)
 
                 console.log("midview.width:", midview.width, "midview.height", midview.height)
             }
         }
 
         Repeater{
-            model: myPolygons.polygons
+            model: EquitmentControl.missionController.polygons.polygons
             delegate:MissionItemIndexLabel{
                 z:4
                 labelx: model.object.number_x
@@ -187,13 +189,13 @@ Rectangle {
                 index: model.object.missionindex
                 checked: model.object.focus
                 onClicked: {
-                    myPolygons.setMissionitemfocus(index)
+                    EquitmentControl.missionController.polygons.setMissionitemfocus(index)
                 }
             }
         }
 
         Repeater{
-            model:myPolygons.lineModel
+            model:EquitmentControl.missionController.polygons.lineModel
             delegate: PloyLine{
                 z:3
                 currentx:  model.object.number_x
@@ -231,7 +233,7 @@ Rectangle {
                 anchors.leftMargin: 2
                 text: "清除航点"
                 onClicked: {
-                    myPolygons.clearmissionlist()
+                    EquitmentControl.missionController.polygons.clearmissionlist()
                     exist_a_path = false
                     exist_a_user_path = false
                     index = 0
@@ -252,8 +254,8 @@ Rectangle {
                 onClicked: {
                     if(!exist_a_user_path&&!exist_a_path)
                     {
-                        myPolygons.getPlanScreenWH(midview.width,midview.height)
-                        myPolygons.userDefineMissionSimple()
+                        EquitmentControl.missionController.polygons.getPlanScreenWH(midview.width,midview.height)
+                        EquitmentControl.missionController.polygons.userDefineMissionSimple()
                         index = 12
                         exist_a_user_path = true
                         exist_a_path = true
@@ -284,7 +286,7 @@ Rectangle {
                         delmissiondia.open()
                     }
                     else{
-                        myPolygons.missiondel()
+                        EquitmentControl.missionController.polygons.missiondel()
                         index = index - 1
                     }
                     if(index == 0){
@@ -349,7 +351,7 @@ Rectangle {
         z:4
 
         onClicked: {
-            myPolygons.getPlanScreenWH(midview.width,midview.height)
+            EquitmentControl.missionController.polygons.getPlanScreenWH(midview.width,midview.height)
             showplan = true
         }
     }
@@ -361,7 +363,7 @@ Rectangle {
         standardButtons: Dialog.Ok | Dialog.Cancel
         onAccepted:
         {
-            missioncontroller.sendToVehicle()
+            EquitmentControl.missionController.sendToVehicle()
             console.log("Ok clicked")
         }
         onRejected: console.log("Cancel clicked")
@@ -374,8 +376,8 @@ Rectangle {
         onAccepted:
         {
             exist_a_path = true
-            myPolygons.getPlanScreenWH(midview.width,midview.height);
-            missioncontroller.loadFromVehicle()
+            EquitmentControl.missionController.polygons.getPlanScreenWH(midview.width,midview.height);
+            EquitmentControl.missionController.loadFromVehicle()
             afterReadWP = true
             console.log("Ok clicked")
         }
@@ -391,8 +393,8 @@ Rectangle {
             text: "已经有一个自定义路径了，是否重新打开一个自定义路径"
         }
         onAccepted: {
-            myPolygons.clearmissionlist()
-            myPolygons.userDefineMissionSimple()
+            EquitmentControl.missionController.polygons.clearmissionlist()
+            EquitmentControl.missionController.polygons.userDefineMissionSimple()
             index = 12
         }
         onRejected: console.log("Cancel clicked")
@@ -408,8 +410,8 @@ Rectangle {
         }
         onAccepted: console.log("ok clicked")
         onRejected: {
-            myPolygons.clearmissionlist()
-            myPolygons.userDefineMissionSimple()
+            EquitmentControl.missionController.polygons.clearmissionlist()
+            EquitmentControl.missionController.polygons.userDefineMissionSimple()
             index = 12
         }
     }

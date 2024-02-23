@@ -9,12 +9,18 @@
 #include "src/MissionManager/mavmission.h"
 #include "src/MissionManager/missionitem.h"
 #include "QTimer"
+#include "src/ECSToolbox.h"
 
-class MissionController :public QObject
+class MissionController :public ECSTool
 {
     Q_OBJECT
 public:
-    MissionController(Vehicle *vehicle);
+    Q_PROPERTY(Polygons*     polygons     READ    polygons     CONSTANT)
+
+    MissionController(ECSApplication* app, ECSToolbox* toolbox);
+    ~MissionController() override;
+
+    void setToolbox(ECSToolbox* toolbox) override;
 
     typedef enum {
         AckNone,            ///< State machine is idle
@@ -32,12 +38,12 @@ public:
     static QmlObjectListModel*  missionlist;
 
     QList<MavMission*>*         getMavMission(void)          {return &_missionItems;}
-    //static GCS_Mavlink *my_mavlink;
 
+    Polygons* polygons() { return _polygons; }
 private:
     int                         _lastMissionRequestSeq;         //记录最新的任务请求序号
     QTimer*                     _ackTimeoutTimer = nullptr;
-
+    Polygons*                   _polygons = nullptr;
 
 private:
     void sendItemsToVehicle(QmlObjectListModel* MissionItemsList);
@@ -59,7 +65,6 @@ private:
 
     MAV_MISSION_TYPE    mission_type = MAV_MISSION_TYPE_ROBOTARMWP;
 
-    Vehicle*            _vehicle = nullptr;
     QList<MavMission*>  _writeMissionItems;     //存储要发给飞控的任务点数据
     QList<MavMission*>  _missionItems;          //存储从飞控读取的任务点数据
 

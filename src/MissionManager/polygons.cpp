@@ -1,6 +1,5 @@
 ﻿#include "polygons.h"
 #include <QDebug>
-#include "src/MissionManager/missioncontroller.h"
 
 QList<MavMission*>* Polygons::readMissionItem = nullptr;
 

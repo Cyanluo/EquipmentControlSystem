@@ -1,9 +1,12 @@
 ﻿#include "gcs_mavlink.h"
+#include "NetworkUDP.h"
+#include "seriallink.h"
 #include <QDebug>
 
-GCS_Mavlink::GCS_Mavlink()
+GCS_Mavlink::GCS_Mavlink(ECSApplication* app, ECSToolbox* toolbox)
+    :ECSTool(app, toolbox)
 {
-
+    setIOType("UDP");
 }
 
 void GCS_Mavlink::handle_inter(mavlink_message_t msg)

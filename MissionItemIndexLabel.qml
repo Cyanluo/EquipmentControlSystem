@@ -1,5 +1,6 @@
 ﻿import QtQuick 2.15
 import QtQuick.Controls 1.2
+import EquitmentControl     1.0
 
 
 Item {
@@ -160,7 +161,7 @@ Item {
                 //鼠标按住的前提下，坐标改变时，计算偏移量，应用到目标item的坐标上即可
                 root.x += mouseX - lastX
                 root.y += mouseY - lastY
-                myPolygons.missiondrag(index,root.x,root.y)
+                EquitmentControl.missionController.polygons.missiondrag(index,root.x,root.y)
                 //console.log(root.x,root.y)
             }
         }

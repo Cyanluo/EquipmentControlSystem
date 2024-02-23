@@ -2,6 +2,7 @@
 import QtQuick.Controls 2.4
 import QtQuick.Layouts 1.3
 import QtQuick.Dialogs 1.3
+import EquitmentControl 1.0
 
 Rectangle{
     property bool connectFlag: false
@@ -21,11 +22,11 @@ Rectangle{
             text: connectFlag ? qsTr("关闭") : qsTr("连接")
             onClicked: {
                 if(text === qsTr("关闭")) {
-                    netWorkManager.close()
+                    EquitmentControl.linkManager.close()
                     connectFlag = false
                 }
                 else {
-                    netWorkManager.open()
+                    EquitmentControl.linkManager.open()
                     connectFlag = true
                 }
             }
@@ -163,13 +164,13 @@ Rectangle{
 
         onAccepted: {
             var linkType = netTypebox.textAt(netTypebox.currentIndex)
-            netWorkManager.setIOType(linkType)
+            EquitmentControl.linkManager.setIOType(linkType)
 
             if(linkType === "UDP") {
-                netWorkManager.getConnectInfo(netSettingloader.item.udpIpText + "," + netSettingloader.item.updPortText)
+                EquitmentControl.linkManager.getConnectInfo(netSettingloader.item.udpIpText + "," + netSettingloader.item.updPortText)
             }
             else if(linkType === "Serial") {
-                netWorkManager.getConnectInfo(netSettingloader.item.serialPortText + "," + netSettingloader.item.baudRateText)
+                EquitmentControl.linkManager.getConnectInfo(netSettingloader.item.serialPortText + "," + netSettingloader.item.baudRateText)
             }
         }
 
@@ -189,9 +190,9 @@ Rectangle{
                         ListElement { text: "UDP" }
                 }
                 Component.onCompleted: {
-                    netWorkManager.setIOType("UDP")
-                    currentIndex = find(netWorkManager.ioType())
-                    netWorkManager.getConnectInfo(netSettingloader.item.udpIpText + "," + netSettingloader.item.updPortText)
+                    EquitmentControl.linkManager.setIOType("UDP")
+                    currentIndex = find(EquitmentControl.linkManager.ioType())
+                    EquitmentControl.linkManager.getConnectInfo(netSettingloader.item.udpIpText + "," + netSettingloader.item.updPortText)
                 }
             }
 

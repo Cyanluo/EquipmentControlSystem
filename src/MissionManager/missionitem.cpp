@@ -20,7 +20,6 @@ void missionitem::setNumber_x(int i)
 int missionitem::getNumber_y() const
 {
     return number_y;
-
 }
 
 void missionitem::setNumber_y(int i)
@@ -43,7 +42,6 @@ void missionitem::setMissionindex(int i)
 bool missionitem::getfocus()
 {
     return focus;
-
 }
 
 void missionitem::setfocus(bool isfocus)
@@ -60,19 +58,16 @@ int missionitem::getPrenumber_x()
 int missionitem::getPrenumber_y()
 {
     return prenumber_y;
-
 }
 
 void missionitem::setPrenumber_x(int x)
 {
     prenumber_x = x;
-
 }
 
 void missionitem::setPrenumber_y(int y)
 {
     prenumber_y = y;
-
 }
 
 

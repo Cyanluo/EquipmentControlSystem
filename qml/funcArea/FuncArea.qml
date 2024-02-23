@@ -2,6 +2,8 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
+import EquitmentControl     1.0
+
 Rectangle {
     border.width: 1
     border.color: "black"
@@ -39,7 +41,7 @@ Rectangle {
         anchors.right: parent.right
         Item {
             id: actionTab
-            anchors.fill: parent
+
             ScrollView{
                 anchors.fill: parent
                 GridLayout{
@@ -80,11 +82,11 @@ Rectangle {
                         id:encipher_test3
                         width: 140
                         height: 80
-                        property bool isEncipher : netWorkManager.isGCSEncipher()
+                        property bool isEncipher : EquitmentControl.linkManager.isGCSEncipher()
                         text:  isEncipher ? qsTr('地面站加密已开启') : qsTr('地面站加密已关闭')
                         onClicked: {
-                            netWorkManager.setEncipher(!netWorkManager.isGCSEncipher())
-                            isEncipher = netWorkManager.isGCSEncipher()
+                            EquitmentControl.linkManager.setEncipher(!EquitmentControl.linkManager.isGCSEncipher())
+                            isEncipher = EquitmentControl.linkManager.isGCSEncipher()
                         }
                     }
                 }
@@ -123,7 +125,7 @@ Rectangle {
 
             Connections{
                 target: activeVehicle
-                onReceiveMavMsg:{
+                function onReceiveMavMsg(msg) {
                     edit.append(qsTr(msg))
                 }
             }

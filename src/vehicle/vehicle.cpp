@@ -2,23 +2,27 @@
 #include <QDebug>
 #include <QDir>
 #include <QDateTime>
+#include "src/ECSApplication.h"
 
 int Vehicle::planScreenW = 0;
 int Vehicle::planScreenH = 0;
 
 Vehicle::Vehicle()
+    :_toolbox(ecsApp()->toolbox())
 {
-    connect(HBTimer, &QTimer::timeout, this, &Vehicle::oneSecondLoop);
-    // HBTimer->start(1000);
-    connect(timer,&QTimer::timeout,this,&Vehicle::arduDisconnect);
-    connect(my_mavlink,&GCS_Mavlink::received,this,&Vehicle::_mavlinkMessageReceived);
-    connect(WDTimer, &QTimer::timeout, this, &Vehicle::changeSaveMavMsgFlag);
-
     QDateTime dateTime= QDateTime::currentDateTime();
     QString str = dateTime .toString("yyyy-MM-dd hh-mm-ss");
     writeFile.setFileName(str + ".dat");
     QDir::setCurrent("./data");
     out.setDevice(&writeFile);
+
+    my_mavlink = _toolbox->linkManager();
+
+    connect(my_mavlink, &GCS_Mavlink::received, this, &Vehicle::_mavlinkMessageReceived);
+    connect(HBTimer, &QTimer::timeout, this, &Vehicle::oneSecondLoop);
+    // HBTimer->start(1000);
+    connect(timer, &QTimer::timeout, this, &Vehicle::arduDisconnect);
+    connect(WDTimer, &QTimer::timeout, this, &Vehicle::changeSaveMavMsgFlag);
 }
 
 void Vehicle::_mavlinkMessageReceived(mavlink_message_t msg)
@@ -36,6 +40,10 @@ void Vehicle::_mavlinkMessageReceived(mavlink_message_t msg)
                 out.writeRawData((char *)buff, len);
                 truncate_buff(buff, MAVLINK_MAX_PACKET_LEN);
             }
+
+            mavlink_tbm_unity_interface_t unity_interface;
+            mavlink_msg_tbm_unity_interface_decode(&msg, &unity_interface);
+
             break;
         }
     }

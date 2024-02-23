@@ -1,7 +1,6 @@
 ﻿import QtQuick 2.15
 import QtQuick.Window 2.15
 
-import setcoord 1.0
 Rectangle{
     id: root
     anchors.fill: parent
@@ -220,75 +219,7 @@ Rectangle{
                 mapCanvas.drawCoordDisappear()
             }
         }
-
-//        SettingCoordinate{
-//            onCoordinateChanged:  {
-//                //mapCanvas.addindex()
-//                mapCanvas.addcountpoint()
-//                console.log("current", coordinate_x, coordinate_y)
-
-//                //如果是第一个点
-//                if(carPreviousX === -1)
-//                {
-//                    carPreviousX = coordinate_x;
-//                    carPreviousY = coordinate_y;
-//                }
-//                else
-//                {
-//                    //如果是第二个点
-//                    if(carCurrentX === -1)
-//                    {
-//                        carCurrentX = coordinate_x;
-//                        carCurrentY = coordinate_y;
-//                    }
-//                    else
-//                    {
-//                        //记录并更新每次的点
-//                        carPreviousX = carCurrentX;
-//                        carPreviousY = carCurrentY;
-//                        carCurrentX = coordinate_x;
-//                        carCurrentY = coordinate_y;
-//                    }
-//                }
-//                if(countpoint >=5)
-//                mapCanvas.requestPaint();
-//            }
-
-//            //画消失部分
-//            onCoordinatedisappearChanged: {
-//                mapCanvas.addcountpoint_D()
-//                console.log("disappear",coordinate_xdisappear,coordinate_ydisappear)
-
-
-//                //如果是第一个点
-//                if(carPreviousX_D === -1)
-//                {
-//                    carPreviousX_D = coordinate_xdisappear;
-//                    carPreviousY_D = coordinate_ydisappear;
-//                }
-//                else
-//                {
-//                    //如果是第二个点
-//                    if(carCurrentX_D === -1)
-//                    {
-//                        carCurrentX_D = coordinate_xdisappear;
-//                        carCurrentY_D = coordinate_ydisappear;
-//                    }
-//                    else
-//                    {
-//                        //记录并更新每次的点
-//                        carPreviousX_D = carCurrentX_D;
-//                        carPreviousY_D = carCurrentY_D;
-//                        carCurrentX_D = coordinate_xdisappear;
-//                        carCurrentY_D = coordinate_ydisappear;
-//                    }
-//                }
-//                if(countpoint_D >=5)              //此处需要改动
-//                mapCanvas.requestPaint();
-//            }
-
-//       }
-  }
+    }
 }
 
 

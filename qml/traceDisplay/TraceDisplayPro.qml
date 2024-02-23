@@ -2,8 +2,6 @@
 import QtQuick.Window 2.15
 import QtQuick.Controls 2.4
 
-import setcoord 1.0
-
 Rectangle {
     id: root
     anchors.fill: parent
@@ -148,7 +146,7 @@ Rectangle {
 
     Connections{
         target: tbmPos
-        onCoordinateChanged:{
+        function onCoordinateChanged() {
             addPoint()
         }
     }

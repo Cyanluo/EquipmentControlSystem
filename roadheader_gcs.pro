@@ -14,8 +14,11 @@ SOURCES += \
         libs/tinycrypt/src/aes_encrypt.c \
         libs/tinycrypt/src/cbc_mode.c \
         libs/tinycrypt/src/utils.c \
+        src/ECSApplication.cpp \
+        src/ECSToolbox.cpp \
         src/Encipher/AESAssembler.cpp \
         src/Encipher/AESEncipher.cpp \
+        src/GlobalQMLAcess.cpp \
         src/MissionManager/mavmission.cpp \
         src/MissionManager/missioncontroller.cpp \
         src/MissionManager/missionitem.cpp \
@@ -27,7 +30,6 @@ SOURCES += \
         src/gcs_mavlink/gcs_mavlink.cpp \
         src/gcs_mavlink/seriallink.cpp \
         src/main.cpp \
-        src/mainwindow.cpp \
         src/vehicle/TBM_Trace.cpp \
         src/vehicle/vehicle.cpp
 
@@ -46,9 +48,12 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
+    src/ECSApplication.h \
+    src/ECSToolbox.h \
     src/Encipher/AESEncipher.h \
     src/Encipher/queue.h \
     src/Encipher/staticqueue.h \
+    src/GlobalQMLAcess.h \
     src/MissionManager/mavmission.h \
     src/MissionManager/missioncontroller.h \
     src/MissionManager/missionitem.h \
@@ -60,7 +65,6 @@ HEADERS += \
     src/gcs_mavlink/NetworkUDP.h \
     src/gcs_mavlink/gcs_mavlink.h \
     src/gcs_mavlink/seriallink.h \
-    src/mainwindow.h \
     src/vehicle/TBM_Trace.h \
     src/vehicle/vehicle.h
 

@@ -1,15 +1,33 @@
 ﻿#include "missioncontroller.h"
 #include <QDebug>
 #include "src/MissionManager/polygons.h"
+#include "src/ECSApplication.h"
 
 QmlObjectListModel* MissionController::missionlist = nullptr;
 
-MissionController::MissionController(Vehicle* vehicle)
+MissionController::MissionController(ECSApplication* app, ECSToolbox* toolbox)
+    :ECSTool(app, toolbox)
 {
-    _vehicle = vehicle;
+    _polygons = new Polygons;
+    missionlist = _polygons->polygons();
+    Polygons::readMissionItem = this->getMavMission();
+    connect(this, &MissionController::readComplete, _polygons, &Polygons::convertToMissonitem);
 
     _ackTimeoutTimer = new QTimer(this);
     connect(_ackTimeoutTimer,&QTimer::timeout,this,&MissionController::_ackTimeout);
+}
+
+void MissionController::setToolbox(ECSToolbox* toolbox)
+{
+    ECSTool::setToolbox(toolbox);
+
+    qmlRegisterUncreatableType<Polygons>("EquitmentControl.MissionController", 1, 0, "Polygons", "Reference only");
+}
+
+MissionController::~MissionController()
+{
+    delete _polygons;
+    delete _ackTimeoutTimer;
 }
 
 void MissionController::loadFromVehicle()
@@ -33,7 +51,7 @@ void MissionController::_requestList()
                                                mission_type);
     uint8_t buff[MAVLINK_MAX_PACKET_LEN];
     int len = mavlink_msg_to_send_buffer(buff, &message);
-    _vehicle->my_mavlink->sendData((const char*)buff, len);
+    ecsApp()->activeVehicle()->my_mavlink->sendData((const char*)buff, len);
 }
 
 void MissionController::_readTransactionComplete()
@@ -51,7 +69,7 @@ void MissionController::_readTransactionComplete()
                                       mission_type);
     uint8_t buff[MAVLINK_MAX_PACKET_LEN];
     int len = mavlink_msg_to_send_buffer(buff, &message);
-    _vehicle->my_mavlink->sendData((const char*)buff, len);
+    ecsApp()->activeVehicle()->my_mavlink->sendData((const char*)buff, len);
 
     disConnectFromMavlink();
     emit readComplete();
@@ -91,10 +109,8 @@ void MissionController::sendItemsToVehicle(QmlObjectListModel *MissionItemsList)
 
 void MissionController::writeMissionItem()
 {
-
     connectToMavlink();//连接mavlink，接受飞控请求
     writeMissionCount();//发送总航点数
-
 }
 
 void MissionController::writeMissionCount()
@@ -110,7 +126,7 @@ void MissionController::writeMissionCount()
                                         mission_type);//mission type
     uint8_t buff[MAVLINK_MAX_PACKET_LEN];
     int len = mavlink_msg_to_send_buffer(buff, &message);
-    _vehicle->my_mavlink->sendData((const char*)buff, len);
+    ecsApp()->activeVehicle()->my_mavlink->sendData((const char*)buff, len);
 
     _startMissionTimeout(AckMissionRequest);  //开始定时，如果超时未收到MissionRequest应答，做进一步处理
 
@@ -118,12 +134,12 @@ void MissionController::writeMissionCount()
 
 void MissionController::connectToMavlink()
 {
-    connect(_vehicle,&Vehicle::receiveMissionMsg,this,&MissionController::_mavlinkMessageReceived);
+    connect(ecsApp()->activeVehicle(),&Vehicle::receiveMissionMsg,this,&MissionController::_mavlinkMessageReceived);
 }
 
 void MissionController::disConnectFromMavlink()
 {
-    disconnect(_vehicle,&Vehicle::receiveMissionMsg,this,&MissionController::_mavlinkMessageReceived);
+    disconnect(ecsApp()->activeVehicle(),&Vehicle::receiveMissionMsg,this,&MissionController::_mavlinkMessageReceived);
 }
 
 void MissionController::initMavmission(QmlObjectListModel *MissionItems)
@@ -212,7 +228,7 @@ void MissionController::_handleMissionRequest(mavlink_message_t message, bool mi
     qDebug()<<"x:"<<item->param1()<<"y:"<<item->param2(); //这里发送的数据是对的
     uint8_t buff[MAVLINK_MAX_PACKET_LEN];
     int len = mavlink_msg_to_send_buffer(buff, &messageOut);
-    _vehicle->my_mavlink->sendData((const char*)buff, len);
+    ecsApp()->activeVehicle()->my_mavlink->sendData((const char*)buff, len);
 
     _startMissionTimeout(AckMissionRequest);
 }
@@ -250,7 +266,7 @@ void MissionController::_requestNextMissionItem()
                                               mission_type);
     uint8_t buff[MAVLINK_MAX_PACKET_LEN];
     int len = mavlink_msg_to_send_buffer(buff, &message);
-    _vehicle->my_mavlink->sendData((const char*)buff, len);
+    ecsApp()->activeVehicle()->my_mavlink->sendData((const char*)buff, len);
 }
 
 void MissionController::_handleMissionItem(const mavlink_message_t &message, bool missionItemInt)
@@ -374,8 +390,6 @@ void MissionController::_handleMissionAck(const mavlink_message_t &message)
 
 //        break;
     }
-
-
 }
 
 void MissionController::_finishedTransmit(bool succeed)

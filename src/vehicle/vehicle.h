@@ -7,6 +7,7 @@
 #include <QFile>
 #include <QDataStream>
 #include <QTimer>
+#include "src/ECSToolbox.h"
 
 enum ap_var_type {
     AP_PARAM_NONE    = 0,
@@ -73,7 +74,7 @@ public:
     Q_INVOKABLE void saveMavToFile(bool flag);
     Q_INVOKABLE void getPlanScreenWH(int W, int H);
 
-    GCS_Mavlink *my_mavlink = new GCS_Mavlink;
+    GCS_Mavlink *my_mavlink = nullptr;
     TBM_Trace   *_tbmTrace  = new TBM_Trace;
     void set_param(const char* id, uint8_t param_type, float param_value);
     Q_INVOKABLE void setVehicleEncipher(bool enable);
@@ -118,6 +119,8 @@ private:
     uint8_t buff[MAVLINK_MAX_PACKET_LEN] = {0};
     static int planScreenW;           //记录当前的plan屏幕的宽度
     static int planScreenH;           //记录当前的plan屏幕的高度
+
+    ECSToolbox* _toolbox = nullptr;
 };
 
 

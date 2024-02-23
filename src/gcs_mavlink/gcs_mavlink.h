@@ -4,15 +4,14 @@
 #include <QObject>
 #include <ardupilotmega/mavlink.h>
 #include "MAVLinkProtocol.h"
-#include "NetworkUDP.h"
-#include "seriallink.h"
 #include "AbstractIO.h"
+#include "src/ECSToolbox.h"
 
-class GCS_Mavlink :public QObject
+class GCS_Mavlink :public ECSTool
 {
     Q_OBJECT
 public:
-    GCS_Mavlink();
+    GCS_Mavlink(ECSApplication* app, ECSToolbox* toolbox);
 
     void sendData(const char *bytes, int length);
     Q_INVOKABLE QString ioType();
