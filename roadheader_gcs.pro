@@ -18,6 +18,8 @@ SOURCES += \
         src/ECSToolbox.cpp \
         src/Encipher/AESAssembler.cpp \
         src/Encipher/AESEncipher.cpp \
+        src/Fact/Fact.cpp \
+        src/Fact/FactMetaData.cpp \
         src/GlobalQMLAcess.cpp \
         src/MissionManager/mavmission.cpp \
         src/MissionManager/missioncontroller.cpp \
@@ -25,15 +27,20 @@ SOURCES += \
         src/MissionManager/planmanager.cpp \
         src/MissionManager/polygons.cpp \
         src/MissionManager/qmlobjectlistmodel.cpp \
+        src/ParameterManager/APMParameterMetaData.cpp \
+        src/ParameterManager/ParameterManager.cpp \
         src/gcs_mavlink/MAVLinkProtocol.cpp \
         src/gcs_mavlink/NetworkUDP.cpp \
         src/gcs_mavlink/gcs_mavlink.cpp \
         src/gcs_mavlink/seriallink.cpp \
         src/main.cpp \
+        src/vehicle/InitialConnectStateMachine.cpp \
+        src/vehicle/StateMachine.cpp \
         src/vehicle/TBM_Trace.cpp \
         src/vehicle/vehicle.cpp
 
 RESOURCES += qml.qrc \
+    doc/doc.qrc \
     yawimage.qrc
 
 # Additional import path used to resolve QML modules in Qt Creator's code model
@@ -53,6 +60,8 @@ HEADERS += \
     src/Encipher/AESEncipher.h \
     src/Encipher/queue.h \
     src/Encipher/staticqueue.h \
+    src/Fact/Fact.h \
+    src/Fact/FactMetaData.h \
     src/GlobalQMLAcess.h \
     src/MissionManager/mavmission.h \
     src/MissionManager/missioncontroller.h \
@@ -60,11 +69,15 @@ HEADERS += \
     src/MissionManager/planmanager.h \
     src/MissionManager/polygons.h \
     src/MissionManager/qmlobjectlistmodel.h \
+    src/ParameterManager/APMParameterMetaData.h \
+    src/ParameterManager/ParameterManager.h \
     src/gcs_mavlink/AbstractIO.h \
     src/gcs_mavlink/MAVLinkProtocol.h \
     src/gcs_mavlink/NetworkUDP.h \
     src/gcs_mavlink/gcs_mavlink.h \
     src/gcs_mavlink/seriallink.h \
+    src/vehicle/InitialConnectStateMachine.h \
+    src/vehicle/StateMachine.h \
     src/vehicle/TBM_Trace.h \
     src/vehicle/vehicle.h
 

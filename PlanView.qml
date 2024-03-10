@@ -13,6 +13,10 @@ Rectangle {
     property bool exist_a_path: false
     property bool afterReadWP: false
 
+    onWidthChanged: {
+        EquitmentControl.missionController.polygons.getPlanScreenWH(midview.width,midview.height)
+    }
+
     Rectangle{
         id:planview
         anchors.fill: parent
@@ -158,6 +162,7 @@ Rectangle {
 
         MouseArea{
             anchors.fill: parent
+
             onClicked: {
                 if(afterReadWP)
                 {

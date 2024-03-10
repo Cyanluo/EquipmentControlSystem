@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>APM/APMParameterFactMetaData.Rover.4.0.xml</file>
+    </qresource>
+</RCC>

@@ -10,12 +10,6 @@ Rectangle {
 
     property var rdHeaderTrace:         [ ]
     property var rdhdconnecttrace:      [ ]
-    property int addIndex:              0
-    property int connectIndex:          0
-    property int disappearconnectIndex: 0
-    property int disappearIndex:        0
-    property bool beginDisappear:       false
-    property bool beginConnectDisappear:false
     property real connectRecLen:        0
     property real rdHdPreviousX :       0
     property real rdHdPreviousY :       0
@@ -35,7 +29,7 @@ Rectangle {
     }
 
     function addPoint(){
-        if(addIndex == 0){
+        if(rdhdconnecttrace.length == 0){
             rdHdCurrentX = tbmPos.coordinate_x
             rdHdCurrentY = tbmPos.coordinate_y
         }
@@ -46,35 +40,20 @@ Rectangle {
             rdHdCurrentY = tbmPos.coordinate_y
             connectRecLen = calLength()
             angle = rotangle()
-            rdhdconnecttrace[connectIndex] = creatConnectObj()
-            rdhdconnecttrace[connectIndex].width = connectRecLen
-            rdhdconnecttrace[connectIndex].rotation = angle
-            connectIndex++
-            beginConnectDisappear = true
+            rdhdconnecttrace.push(creatConnectObj())
+            rdhdconnecttrace[rdhdconnecttrace.length-1].width = connectRecLen
+            rdhdconnecttrace[rdhdconnecttrace.length-1].rotation = angle
         }
-        rdHeaderTrace[addIndex] = creatObj()
-        addIndex++
-        beginDisappear = true
-        //加快消失速度
-        if(addIndex >= 8)
-        {
-            timerInterval = 270
-        }
+        rdHeaderTrace.push(creatObj())
     }
 
-    function deletePoint(){
-        rdHeaderTrace[disappearIndex].destroy()
-        disappearIndex++
-        if(disappearIndex >= addIndex){
-            beginDisappear = false
+    function deleteOne() {
+        if(rdHeaderTrace.length >= 2) {
+            rdHeaderTrace.shift().destroy()
         }
-    }
 
-    function deleteConnect(){
-        rdhdconnecttrace[disappearconnectIndex].destroy()
-        disappearconnectIndex++
-        if(disappearconnectIndex >= connectIndex){
-            beginConnectDisappear = false
+        if(rdhdconnecttrace.length >= 2) {
+            rdhdconnecttrace.shift().destroy()
         }
     }
 
@@ -91,10 +70,6 @@ Rectangle {
 
     function reset(){
         timerInterval = 600
-        addIndex = 0
-        connectIndex = 0
-        disappearIndex = 0
-        disappearconnectIndex = 0
         rdHeaderTrace.clear()
         rdhdconnecttrace.clear()
     }
@@ -128,19 +103,9 @@ Rectangle {
         id:disappeartimer
         interval: timerInterval
         repeat: true
-        running: beginDisappear
+        running: true
         onTriggered: {
-            deletePoint()
-        }
-    }
-
-    Timer{
-        id:disappearConnecttimer
-        interval: timerInterval
-        repeat: true
-        running: beginConnectDisappear
-        onTriggered: {
-            deleteConnect()
+            deleteOne()
         }
     }
 

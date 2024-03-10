@@ -8,6 +8,7 @@ class Polygons;
 class Vehicle;
 class MissionController;
 class GCS_Mavlink;
+class ParameterManager;
 
 class ECSToolbox : public QObject
 {
@@ -20,12 +21,14 @@ public:
 
     GCS_Mavlink* linkManager() { return _linkManager; }
     MissionController* missionController() { return _missionController; }
+    ParameterManager* parameterManager() { return _parameterManager; }
 
 private:
     void setChildToolboxes(void);
 
     GCS_Mavlink*    _linkManager;
     MissionController* _missionController;
+    ParameterManager* _parameterManager;
 
     friend class ECSApplication;
 };

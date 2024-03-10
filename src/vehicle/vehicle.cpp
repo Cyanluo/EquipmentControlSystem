@@ -3,12 +3,14 @@
 #include <QDir>
 #include <QDateTime>
 #include "src/ECSApplication.h"
+#include "src/ParameterManager/ParameterManager.h"
 
 int Vehicle::planScreenW = 0;
 int Vehicle::planScreenH = 0;
 
 Vehicle::Vehicle()
     :_toolbox(ecsApp()->toolbox())
+    ,_parameterManager(ecsApp()->toolbox()->parameterManager())
 {
     QDateTime dateTime= QDateTime::currentDateTime();
     QString str = dateTime .toString("yyyy-MM-dd hh-mm-ss");
@@ -17,6 +19,7 @@ Vehicle::Vehicle()
     out.setDevice(&writeFile);
 
     my_mavlink = _toolbox->linkManager();
+    _initStateMachine = new InitialConnectStateMachine(this);
 
     connect(my_mavlink, &GCS_Mavlink::received, this, &Vehicle::_mavlinkMessageReceived);
     connect(HBTimer, &QTimer::timeout, this, &Vehicle::oneSecondLoop);
@@ -27,8 +30,7 @@ Vehicle::Vehicle()
 
 void Vehicle::_mavlinkMessageReceived(mavlink_message_t msg)
 {
-    //传给missioncontroller
-    emit receiveMissionMsg(msg);
+    _parameterManager->mavlinkMessageReceived(msg);
 
     switch (msg.msgid) {
         case MAVLINK_MSG_ID_TBM_UNITY_INTERFACE:
@@ -81,6 +83,9 @@ void Vehicle::_mavlinkMessageReceived(mavlink_message_t msg)
         //qDebug()<<"没有处理的消息id："<<msg.msgid;
         break;
     }
+
+    //传给missioncontroller
+    emit receiveMissionMsg(msg);
 }
 
 void Vehicle::changeSaveMavMsgFlag()
@@ -158,15 +163,25 @@ void Vehicle::handleHeartBeatMessage(mavlink_message_t& msg)
                            heartbeat.type);
 
     checkConnect();              //启动两秒定时器，监测心跳包，类似于看门狗
+
+    _type = (MAV_TYPE)heartbeat.type;
+    _sysid = msg.sysid;
+    _compid = msg.compid;
+
     if(heartbeatCount<4){
         if(heartbeatCount == 0){
             setBeginConnect(true);
+            if(!active) {
+                _initStateMachine->start();
+            }
+            active = true;
         }
         heartbeatCount++;
     }
     else{
         setIsConnected(true);
         //setBeginConnect(false);
+        active = false;
     }
 }
 

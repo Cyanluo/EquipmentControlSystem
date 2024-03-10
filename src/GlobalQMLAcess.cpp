@@ -12,4 +12,5 @@ void GlobalQMLAcess::setToolbox(ECSToolbox* toolbox)
 
     _linkManager = toolbox->linkManager();
     _missionController = toolbox->missionController();
+    _parameterManager = toolbox->parameterManager();
 }

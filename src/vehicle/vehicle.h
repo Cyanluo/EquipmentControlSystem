@@ -8,6 +8,9 @@
 #include <QDataStream>
 #include <QTimer>
 #include "src/ECSToolbox.h"
+#include "src/vehicle/InitialConnectStateMachine.h"
+
+class ParameterManager;
 
 enum ap_var_type {
     AP_PARAM_NONE    = 0,
@@ -74,10 +77,18 @@ public:
     Q_INVOKABLE void saveMavToFile(bool flag);
     Q_INVOKABLE void getPlanScreenWH(int W, int H);
 
+    MAV_TYPE     type() const { return _type; }
+    uint8_t     sysid() const { return _sysid; }
+    uint8_t     compid() const { return _compid; }
+
     GCS_Mavlink *my_mavlink = nullptr;
     TBM_Trace   *_tbmTrace  = new TBM_Trace;
     void set_param(const char* id, uint8_t param_type, float param_value);
     Q_INVOKABLE void setVehicleEncipher(bool enable);
+    static int  planScreenW;           //记录当前的plan屏幕的宽度
+    static int  planScreenH;           //记录当前的plan屏幕的高度
+
+    bool active = false;
 
 private:
     void   handleHeartBeatMessage(mavlink_message_t& msg);
@@ -103,24 +114,27 @@ private:
     void   setBeginConnect(bool x);
     void   setIsConnected(bool x);
     void   setPowerVcc(int pv);
-    int getPlanScreenH(void)             {return planScreenH; }
-    int getPlanScreenW(void)             {return planScreenW; }
-    void setPlanScreenW(int W);
-    void setPlanScreenH(int H);
+    int    getPlanScreenH(void)             {return planScreenH; }
+    int    getPlanScreenW(void)             {return planScreenW; }
+    void   setPlanScreenW(int W);
+    void   setPlanScreenH(int H);
 
     void changeSaveMavMsgFlag();
     void truncate_buff(uint8_t* buff, int len);
 
     QString severity2String(MAV_SEVERITY severity);
 
-    QFile writeFile;
+    QFile       writeFile;
     QDataStream out;
-    bool mavFlag = false;
-    uint8_t buff[MAVLINK_MAX_PACKET_LEN] = {0};
-    static int planScreenW;           //记录当前的plan屏幕的宽度
-    static int planScreenH;           //记录当前的plan屏幕的高度
+    bool        mavFlag = false;
+    uint8_t     buff[MAVLINK_MAX_PACKET_LEN] = {0};
+    MAV_TYPE     _type;
+    uint8_t     _sysid;
+    uint8_t     _compid;
 
-    ECSToolbox* _toolbox = nullptr;
+    ECSToolbox*                 _toolbox = nullptr;
+    InitialConnectStateMachine* _initStateMachine = nullptr;
+    ParameterManager*           _parameterManager = nullptr;
 };
 
 
