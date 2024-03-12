@@ -7,8 +7,10 @@ StateMachine::StateMachine(void)
 
 void StateMachine::start(void)
 {
-    _active = true;
-    advance();
+    if(!_active) {
+        _active = true;
+        advance();
+    }
 }
 
 void StateMachine::advance(void)

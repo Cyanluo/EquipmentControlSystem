@@ -1,5 +1,4 @@
 #include "AESEncipher.h"
-#include "QDebug"
 
 AESAssembler::AESAssembler()
 {
@@ -52,7 +51,7 @@ bool AESAssembler::parse(Message& msg)
             memcpy(&_msg.length, len, 4);
             _buffer.remove(4);
 
-            if(_msg.length < 100) {
+            if(_msg.length < 1000) {
                 _status = PARSE_STATE_GOT_LENGTH;
             } else {
                 _status = PARSE_STATE_GOT_FINISH_FLAGS;

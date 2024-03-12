@@ -3,11 +3,9 @@ import QtGraphicalEffects 1.13
 //连接状态显示
 Rectangle{
     id:mainRec
-    property real progress:              0
-    property bool isTimerWork:           activeVehicle.beginConnect
     property bool isConnectedRecVisable: activeVehicle.isConnected
     property bool isProgressRecVisable:  activeVehicle.beginConnect
-    property bool isProgressDone:        false
+    property real progress:              0
 
     Rectangle{
         id:disconnectedRec
@@ -19,7 +17,6 @@ Rectangle{
             gradient: Gradient{
                 GradientStop { position: 0.0; color: "purple" }
                 GradientStop { position: 0.33; color: "gray" }
-                //GradientStop { position: 1.0; color: "green" }
             }
         }
         Text {
@@ -33,7 +30,7 @@ Rectangle{
         id:progressRec
         visible: isProgressRecVisable
         height: parent.height
-        width: progress
+        width:  progress
         color: "#9be15d"
     }
 
@@ -48,7 +45,6 @@ Rectangle{
             gradient: Gradient{
                 GradientStop { position: 0.0; color: "#96fbc4" }
                 GradientStop { position: 0.33; color: "#f9f586" }
-                //GradientStop { position: 1.0; color: "green" }
             }
         }
         Text {
@@ -57,25 +53,14 @@ Rectangle{
         }
     }
 
-
-
     Timer {
         id: timer
-        interval: 10
+        interval: 200
         repeat: true
-        running: isTimerWork
+        running: isProgressRecVisable
         triggeredOnStart: false
         onTriggered: {
-            if(progress <=parent.width){
-                progress = progress + 20;
-            }
-            else{
-                isProgressDone = true;
-            }
-
-            if(isConnectedRecVisable){
-                progress = 0;
-            }
+            progress = parent.width * activeVehicle.progress
         }
     }
 }

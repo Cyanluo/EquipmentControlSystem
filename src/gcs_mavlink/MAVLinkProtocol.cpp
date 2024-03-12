@@ -11,7 +11,7 @@ void MAVLinkProtocol::prepare(QByteArray b)
 {
     if(!_encipher.isEnable())
     {
-        for (uint8_t position = 0; position < (uint8_t)b.size(); position++)
+        for (int position = 0; position < b.size(); position++)
         {
             if (mavlink_parse_char(1, (uint8_t)b.data()[position], &_message, &_status))
             {
@@ -36,7 +36,9 @@ void MAVLinkProtocol::parse()
         {
             if(_encipher.aes_decrypt(decrypt_buff, msg.payload, msg.length))
             {
-                for (uint8_t position = 0; position < (uint8_t)msg.length; position++)
+                if(msg.length > 1000)
+                    return;
+                for (uint32_t position = 0; position < (uint32_t)msg.length; position++)
                 {
                     if (mavlink_parse_char(1, decrypt_buff[position], &_message, &_status))
                     {

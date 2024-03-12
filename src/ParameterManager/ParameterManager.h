@@ -17,6 +17,8 @@ public:
     void refreshAllParameters(uint8_t componentID = MAV_COMP_ID_ALL);
     void mavlinkMessageReceived(mavlink_message_t message);
 
+    bool isInitialLoadComplete() { return _initialLoadComplete; }
+
     /// Returns the specified Parameter. Returns a default empty fact is parameter does not exists. Also will pop
     /// a missing parameter error to user if parameter does not exist.
     ///     @param componentId: Component id or FactSystem::defaultComponentId
@@ -30,6 +32,7 @@ signals:
     void factAdded                  (int componentId, Fact* fact);
     void parametersReadyChanged     (bool parametersReady);
     void missingParametersChanged   (bool missingParameters);
+    void loadProgressChanged        (int componentId, float value);
 
 private:
     void    _waitingParamTimeout            (void);
@@ -41,6 +44,8 @@ private:
     void    _sendParamSetToVehicle          (int componentId, const QString& paramName, FactMetaData::ValueType_t valueType, const QVariant& value);
     void    _factRawValueUpdated            (const QVariant& rawValue);
     void    _factRawValueUpdateWorker       (int componentId, const QString& name, FactMetaData::ValueType_t valueType, const QVariant& rawValue);
+    void    _updateProgressBar              (void);
+    void    _setLoadProgress                (int componentId, double loadProgress);
 
     APMParameterMetaData*   _apmMetaData    = nullptr;
     Vehicle*                _vehicle        = nullptr;
@@ -64,7 +69,9 @@ private:
     int _totalParamCount;                       ///< Number of parameters across all components
     int _waitingWriteParamBatchCount = 0;       ///< Number of parameters which are batched up waiting on write responses
     int _waitingReadParamNameBatchCount = 0;    ///< Number of parameters which are batched up waiting on read responses
-    bool        _initialLoadComplete;           ///< true: Initial load of all parameters complete, whether successful or not
+
+    bool                _initialLoadComplete;           ///< true: Initial load of all parameters complete, whether successful or not
+    QMap<int, int>      _loadProgress;                  ///< Parameter load progess, [[0.0,1.0]]
 
     static const int    _maxReadWriteRetry = 5;                 ///< Maximum retries read/write
     static const int    _maxInitialLoadRetrySingleParam = 5;    ///< Maximum retries for initial index based load of a single param

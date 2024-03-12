@@ -22,10 +22,18 @@ Vehicle::Vehicle()
     _initStateMachine = new InitialConnectStateMachine(this);
 
     connect(my_mavlink, &GCS_Mavlink::received, this, &Vehicle::_mavlinkMessageReceived);
-    connect(HBTimer, &QTimer::timeout, this, &Vehicle::oneSecondLoop);
-    // HBTimer->start(1000);
     connect(timer, &QTimer::timeout, this, &Vehicle::arduDisconnect);
     connect(WDTimer, &QTimer::timeout, this, &Vehicle::changeSaveMavMsgFlag);
+    connect(_parameterManager, &ParameterManager::parametersReadyChanged, this, &Vehicle::parameterReady);
+    connect(_parameterManager, &ParameterManager::loadProgressChanged, this, &Vehicle::setProgress);
+}
+
+Vehicle::~Vehicle()
+{
+    delete timer;
+    delete WDTimer;
+    delete _initStateMachine;
+    delete _tbmTrace;
 }
 
 void Vehicle::_mavlinkMessageReceived(mavlink_message_t msg)
@@ -38,14 +46,12 @@ void Vehicle::_mavlinkMessageReceived(mavlink_message_t msg)
             if(mavFlag)
             {
                 int len = mavlink_msg_to_send_buffer(buff, &msg);
+
                 out << len;
                 out.writeRawData((char *)buff, len);
+
                 truncate_buff(buff, MAVLINK_MAX_PACKET_LEN);
             }
-
-            mavlink_tbm_unity_interface_t unity_interface;
-            mavlink_msg_tbm_unity_interface_decode(&msg, &unity_interface);
-
             break;
         }
     }
@@ -71,20 +77,14 @@ void Vehicle::_mavlinkMessageReceived(mavlink_message_t msg)
         handleTBM_Positional_Parameters(msg);
         break;
 
-    case MAVLINK_MSG_ID_RANGEFINDER:
-        handleRangefinder(msg);
-        break;
-
     case MAVLINK_MSG_ID_STATUSTEXT:
         handleMsgIdStatustext(msg);
         break;
 
     default:
-        //qDebug()<<"没有处理的消息id："<<msg.msgid;
         break;
     }
 
-    //传给missioncontroller
     emit receiveMissionMsg(msg);
 }
 
@@ -111,16 +111,19 @@ void Vehicle::handleAltitude(mavlink_message_t& msg)
 {
     mavlink_altitude_t altitude;
     mavlink_msg_altitude_decode(&msg,&altitude);
-    qDebug()<<altitude.altitude_relative;
+
+    qDebug() << altitude.altitude_relative;
 }
 
 void Vehicle::handleAttitude(mavlink_message_t& msg)
 {
     mavlink_attitude_t attitude;
     mavlink_msg_attitude_decode(&msg,&attitude);
+
     setPitch(attitude.pitch);
     setYaw(attitude.yaw);
     setRoll(attitude.roll);
+
     if(initYawOffset || reconnect){
         setYawOffset(attitude.yaw);
         initYawOffset = false;
@@ -132,6 +135,7 @@ void Vehicle::handlePowerStatus(mavlink_message_t& msg)
 {
     mavlink_power_status_t powerStatus;
     mavlink_msg_power_status_decode(&msg,&powerStatus);
+
     setPowerVcc(powerStatus.Vcc);
 }
 
@@ -139,15 +143,9 @@ void Vehicle::handleTBM_Positional_Parameters(mavlink_message_t& msg)
 {
     mavlink_tbm_positional_parameters_t tbm_pp;
     mavlink_msg_tbm_positional_parameters_decode(&msg, &tbm_pp);
-    _tbmTrace->setCoordinate_x(tbm_pp.rdheader_xb*planScreenW/2 + planScreenW/2);   //533是坐标系x偏置
-    _tbmTrace->setCoordinate_y(planScreenH - tbm_pp.rdheader_yb*planScreenH);   //608是y向偏置
-    // qDebug()<<"rdheader_xb:"<<tbm_pp.rdheader_xb;
-    // qDebug()<<"rdheader_yb:"<<tbm_pp.rdheader_yb;
-}
 
-void Vehicle::handleRangefinder(mavlink_message_t& msg)
-{
-
+    _tbmTrace->setCoordinate_x(tbm_pp.rdheader_xb*planScreenW/2 + planScreenW/2);
+    _tbmTrace->setCoordinate_y(planScreenH - tbm_pp.rdheader_yb*planScreenH);
 }
 
 void Vehicle::handleHeartBeatMessage(mavlink_message_t& msg)
@@ -164,24 +162,27 @@ void Vehicle::handleHeartBeatMessage(mavlink_message_t& msg)
 
     checkConnect();              //启动两秒定时器，监测心跳包，类似于看门狗
 
-    _type = (MAV_TYPE)heartbeat.type;
-    _sysid = msg.sysid;
-    _compid = msg.compid;
+    if(msg.compid == _defaultCompid){
+        _type = (MAV_TYPE)heartbeat.type;
+        _sysid = msg.sysid;
+        _compid = msg.compid;
+    }
 
-    if(heartbeatCount<4){
-        if(heartbeatCount == 0){
+    if(!_parameterManager->isInitialLoadComplete()) {
+        if(heartbeatCount == 0) {
             setBeginConnect(true);
-            if(!active) {
-                _initStateMachine->start();
-            }
-            active = true;
+            _initStateMachine->start();
         }
         heartbeatCount++;
-    }
-    else{
-        setIsConnected(true);
-        //setBeginConnect(false);
-        active = false;
+    } else {
+        if(heartbeatCount <= 3) {
+            heartbeatCount++;
+        } else if(heartbeatCount > 100) {
+            heartbeatCount = 5;
+            setIsConnected(true);
+        } else {
+            setIsConnected(true);
+        }
     }
 }
 
@@ -284,20 +285,29 @@ void Vehicle::checkConnect()
 void Vehicle::arduDisconnect()
 {
     timer->stop();
-    setBeginConnect(false);
-    setIsConnected(false);
     reconnect = true;
     heartbeatCount = 0;
 
-    //重置roll，yaw，picth
+    setBeginConnect(false);
+    setIsConnected(false);
     setRoll(0);
     setPitch(0);
     setYaw(yawOffset);
 }
 
-float Vehicle::getPitch()
+void Vehicle::parameterReady(bool ready)
 {
-    return pitch;
+    if(ready) {
+        setIsConnected(true);
+        setBeginConnect(false);
+    }
+}
+
+void Vehicle::setProgress(int componentId, float value)
+{
+    if(_compid == componentId) {
+        _progress = value;
+    }
 }
 
 void Vehicle::setPitch(float x)
@@ -306,21 +316,10 @@ void Vehicle::setPitch(float x)
     emit pitchChanged();
 }
 
-float Vehicle::getYaw()
-{
-    return yaw;
-}
-
-
 void Vehicle::setYaw(float x)
 {
     yaw = x;
     emit yawChanged();
-}
-
-float Vehicle::getRoll()
-{
-    return roll;
 }
 
 void Vehicle::setRoll(float x)
@@ -343,6 +342,9 @@ void Vehicle::setBeginConnect(bool x)
 
 void Vehicle::setIsConnected(bool x)
 {
+    if(x == isConnected)
+        return;
+
     isConnected = x;
     emit isConnectedChanged();
 }
@@ -371,11 +373,6 @@ void Vehicle::getPlanScreenWH(int W, int H)
     setPlanScreenW(W);
 }
 
-void Vehicle::oneSecondLoop()
-{
-    sendHeartBeatToVehicle(4,3,3,1,5,10);
-}
-
 void Vehicle::truncate_buff(uint8_t* buff, int len)
 {
     for(int i=0; i<len; i++)
@@ -384,28 +381,9 @@ void Vehicle::truncate_buff(uint8_t* buff, int len)
     }
 }
 
-void Vehicle::set_param(const char* id, uint8_t param_type, float param_value)
-{
-    mavlink_param_set_t param_set;
-    memset(param_set.param_id, 0, sizeof(param_set.param_id));
-    memcpy(param_set.param_id, id, strlen(id));
-    param_set.param_type = param_type;
-    param_set.param_value = param_value;
-    param_set.target_system = 1;
-    param_set.target_component = 1;
-
-    mavlink_message_t message;
-    mavlink_msg_param_set_encode(1,
-                                 1,
-                                 &message,
-                                 &param_set);
-
-    uint8_t buff[MAVLINK_MAX_PACKET_LEN];
-    int len = mavlink_msg_to_send_buffer(buff,&message);
-    my_mavlink->sendData((const char*)buff, len);
-}
-
 void Vehicle::setVehicleEncipher(bool enable)
 {
-    set_param("ENcipher_enAES", AP_PARAM_INT8, enable ? 1 : 0);
+    Fact* fact = ecsApp()->toolbox()->parameterManager()->getParameter(_compid, "ENcipher_enAES");
+
+    fact->setRawValue(enable ? 1 : 0);
 }

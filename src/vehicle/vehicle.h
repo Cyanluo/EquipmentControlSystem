@@ -29,10 +29,12 @@ class Vehicle :public QObject
 public slots:
     void _mavlinkMessageReceived(mavlink_message_t msg);
     void arduDisconnect(void);
-    void oneSecondLoop(void);
+    void parameterReady(bool ready);
+    void setProgress(int componentId, float value);
 
 public:
     Vehicle();
+    ~Vehicle();
 
     Q_PROPERTY(float pitch        READ getPitch        WRITE setPitch        NOTIFY pitchChanged)
     Q_PROPERTY(float yaw          READ getYaw          WRITE setYaw          NOTIFY yawChanged)
@@ -41,8 +43,10 @@ public:
     Q_PROPERTY(bool  beginConnect READ getBeginConnect WRITE setBeginConnect NOTIFY beginConnectChanged)
     Q_PROPERTY(bool  isConnected  READ getIsConnected  WRITE setIsConnected  NOTIFY isConnectedChanged)
     Q_PROPERTY(int   powerVcc     READ getPowerVcc     WRITE setPowerVcc     NOTIFY powerVccChanged)
-    Q_PROPERTY(int planScreenW READ getPlanScreenW WRITE setPlanScreenW NOTIFY PlanScreenWChanged)
-    Q_PROPERTY(int planScreenH READ getPlanScreenH WRITE setPlanScreenH NOTIFY PlanScreenHChanged)
+    Q_PROPERTY(int   planScreenW  READ getPlanScreenW  WRITE setPlanScreenW  NOTIFY PlanScreenWChanged)
+    Q_PROPERTY(int   planScreenH  READ getPlanScreenH  WRITE setPlanScreenH  NOTIFY PlanScreenHChanged)
+
+    Q_PROPERTY(float    progress   READ    progress      CONSTANT)
 
 signals:
     void pitchChanged();
@@ -58,37 +62,19 @@ signals:
     void receiveMavMsg(QString msg);
 
 public:
-    QTimer *timer         = new QTimer(this);
-    QTimer *HBTimer       = new QTimer(this);
-    QTimer *WDTimer       = new QTimer(this);
-
-    float pitch          = 0;
-    float yaw            = 0;
-    float roll           = 0;
-    int   powerVcc       = 0;
-    float yawOffset      = 0;          //保存第一次偏航数据，所谓偏置角
-    int   heartbeatCount = 0;
-
-    bool  initYawOffset  = true;       //在第一次收到yaw值时赋值
-    bool  reconnect      = false;      //在重新连接时更新yaw offset
-    bool  beginConnect   = false;
-    bool  isConnected    = false;
-
     Q_INVOKABLE void saveMavToFile(bool flag);
     Q_INVOKABLE void getPlanScreenWH(int W, int H);
-
-    MAV_TYPE     type() const { return _type; }
-    uint8_t     sysid() const { return _sysid; }
-    uint8_t     compid() const { return _compid; }
-
-    GCS_Mavlink *my_mavlink = nullptr;
-    TBM_Trace   *_tbmTrace  = new TBM_Trace;
-    void set_param(const char* id, uint8_t param_type, float param_value);
     Q_INVOKABLE void setVehicleEncipher(bool enable);
-    static int  planScreenW;           //记录当前的plan屏幕的宽度
-    static int  planScreenH;           //记录当前的plan屏幕的高度
 
-    bool active = false;
+    MAV_TYPE    type()          const { return _type;           }
+    uint8_t     sysid()         const { return _sysid;          }
+    uint8_t     compid()        const { return _compid;         }
+    uint8_t     defaultCompid() const { return _defaultCompid;  }
+
+    GCS_Mavlink     *my_mavlink     =   nullptr;
+    TBM_Trace       *_tbmTrace      =   new TBM_Trace;
+    static int      planScreenW;                        //记录当前的plan屏幕的宽度
+    static int      planScreenH;                        //记录当前的plan屏幕的高度
 
 private:
     void   handleHeartBeatMessage(mavlink_message_t& msg);
@@ -96,46 +82,64 @@ private:
     void   handleAttitude(mavlink_message_t& msg);
     void   handlePowerStatus(mavlink_message_t& msg);
     void   handleTBM_Positional_Parameters(mavlink_message_t& msg);
-    void   handleRangefinder(mavlink_message_t& msg);
     void   handleMsgIdStatustext(mavlink_message_t& msg);
     void   sendHeartBeatToVehicle(uint32_t custom_mode,uint8_t mavlink_version,uint8_t autopilot,uint8_t base_mode,uint8_t system_status,uint8_t type);
     void   checkConnect();
-    float  getPitch();
-    float  getRoll();
-    float  getYaw();
-    float  getYawOffset()                            {return yawOffset;   }
-    bool   getBeginConnect()                         {return beginConnect;}
-    bool   getIsConnected()                          {return isConnected; }
-    int    getPowerVcc()                             {return powerVcc;    }
-    void   setPitch(float x);
-    void   setYaw(float x);
-    void   setRoll(float x);
-    void   setYawOffset(float x);
-    void   setBeginConnect(bool x);
-    void   setIsConnected(bool x);
-    void   setPowerVcc(int pv);
-    int    getPlanScreenH(void)             {return planScreenH; }
-    int    getPlanScreenW(void)             {return planScreenW; }
-    void   setPlanScreenW(int W);
-    void   setPlanScreenH(int H);
+
+    float   getPitch()                       { return pitch;          }
+    float   getRoll()                        { return roll;           }
+    float   getYaw()                         { return yaw;            }
+    float   getYawOffset()                   { return yawOffset;      }
+    int     getPowerVcc()                    { return powerVcc;       }
+    int     getPlanScreenH(void)             { return planScreenH;    }
+    int     getPlanScreenW(void)             { return planScreenW;    }
+    bool    getIsConnected()                 { return isConnected;    }
+    bool    getBeginConnect()                { return beginConnect;   }
+    float   progress()                       { return _progress;      }
+
+    void    setPitch(float x);
+    void    setYaw(float x);
+    void    setRoll(float x);
+    void    setYawOffset(float x);
+    void    setPowerVcc(int pv);
+    void    setPlanScreenW(int W);
+    void    setPlanScreenH(int H);
+    void    setBeginConnect(bool x);
+    void    setIsConnected(bool x);
 
     void changeSaveMavMsgFlag();
     void truncate_buff(uint8_t* buff, int len);
 
     QString severity2String(MAV_SEVERITY severity);
 
-    QFile       writeFile;
-    QDataStream out;
-    bool        mavFlag = false;
-    uint8_t     buff[MAVLINK_MAX_PACKET_LEN] = {0};
-    MAV_TYPE     _type;
-    uint8_t     _sysid;
-    uint8_t     _compid;
+    float   pitch             = 0;
+    float   yaw               = 0;
+    float   roll              = 0;
+    int     powerVcc          = 0;
+    float   yawOffset         = 0;          //保存第一次偏航数据，所谓偏置角
+    int     heartbeatCount    = 0;
+    bool    initYawOffset     = true;       //在第一次收到yaw值时赋值
+    bool    reconnect         = false;      //在重新连接时更新yaw offset
+    bool    beginConnect      = false;
+    bool    isConnected       = false;
+    float   _progress         = 0;
 
-    ECSToolbox*                 _toolbox = nullptr;
-    InitialConnectStateMachine* _initStateMachine = nullptr;
-    ParameterManager*           _parameterManager = nullptr;
+    QFile           writeFile;
+    QDataStream     out;
+    bool            mavFlag = false;
+    uint8_t         buff[MAVLINK_MAX_PACKET_LEN] = {0};
+
+    MAV_TYPE        _type;
+    uint8_t         _sysid  = 1;
+    uint8_t         _compid = 1;
+    uint8_t         _defaultCompid = 1;
+
+    QTimer *timer         = new QTimer(this);
+    QTimer *WDTimer       = new QTimer(this);
+
+    ECSToolbox*                 _toolbox            = nullptr;
+    InitialConnectStateMachine* _initStateMachine   = nullptr;
+    ParameterManager*           _parameterManager   = nullptr;
 };
-
 
 #endif // VEHICLE_H
