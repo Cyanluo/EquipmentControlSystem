@@ -22,6 +22,23 @@ enum ap_var_type {
     AP_PARAM_GROUP
 };
 
+enum Mode : uint8_t {
+    MANUAL       = 0,
+    ACRO         = 1,
+    STEERING     = 3,
+    HOLD         = 4,
+    LOITER       = 5,
+    FOLLOW       = 6,
+    SIMPLE       = 7,
+    AUTO         = 10,
+    RTL          = 11,
+    SMART_RTL    = 12,
+    GUIDED       = 15,
+    INITIALISING = 16,
+    TBM          = 17,
+    EXCAVATOR    = 18
+};
+
 class Vehicle :public QObject
 {
     Q_OBJECT
@@ -65,6 +82,7 @@ public:
     Q_INVOKABLE void saveMavToFile(bool flag);
     Q_INVOKABLE void getPlanScreenWH(int W, int H);
     Q_INVOKABLE void setVehicleEncipher(bool enable);
+    Q_INVOKABLE void setMode(unsigned int new_mode);
 
     MAV_TYPE    type()          const { return _type;           }
     uint8_t     sysid()         const { return _sysid;          }
@@ -83,6 +101,7 @@ private:
     void   handlePowerStatus(mavlink_message_t& msg);
     void   handleTBM_Positional_Parameters(mavlink_message_t& msg);
     void   handleMsgIdStatustext(mavlink_message_t& msg);
+    void   handleMsgIdCommandAck(mavlink_message_t& msg);
     void   sendHeartBeatToVehicle(uint32_t custom_mode,uint8_t mavlink_version,uint8_t autopilot,uint8_t base_mode,uint8_t system_status,uint8_t type);
     void   checkConnect();
 
@@ -132,6 +151,8 @@ private:
     MAV_TYPE        _type;
     uint8_t         _sysid  = 1;
     uint8_t         _compid = 1;
+    uint32_t        _custom_mode;
+    uint8_t         _base_mode;
     uint8_t         _defaultCompid = 1;
 
     QTimer *timer         = new QTimer(this);

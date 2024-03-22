@@ -7,9 +7,6 @@ Rectangle {
     property bool isaddR:  true
     property bool isaddP:  true
 
-
-
-
     Row{
         anchors.fill: parent
         Rectangle{

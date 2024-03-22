@@ -81,6 +81,10 @@ void Vehicle::_mavlinkMessageReceived(mavlink_message_t msg)
         handleMsgIdStatustext(msg);
         break;
 
+    case MAVLINK_MSG_ID_COMMAND_ACK:
+        handleMsgIdCommandAck(msg);
+        break;
+
     default:
         break;
     }
@@ -166,6 +170,8 @@ void Vehicle::handleHeartBeatMessage(mavlink_message_t& msg)
         _type = (MAV_TYPE)heartbeat.type;
         _sysid = msg.sysid;
         _compid = msg.compid;
+        _custom_mode = heartbeat.custom_mode;
+        _base_mode = heartbeat.base_mode;
     }
 
     if(!_parameterManager->isInitialLoadComplete()) {
@@ -238,6 +244,34 @@ void Vehicle::handleMsgIdStatustext(mavlink_message_t& msg)
     }
 
     last_textid = text.id;
+}
+
+void Vehicle::handleMsgIdCommandAck(mavlink_message_t& msg)
+{
+    mavlink_command_ack_t command_ack;
+    mavlink_msg_command_ack_decode(&msg, &command_ack);
+
+    switch (command_ack.command) {
+    case MAVLINK_MSG_ID_SET_MODE:
+    {
+        if(command_ack.result  == MAV_RESULT_FAILED)
+        {
+
+        }
+        else if(command_ack.result  == MAV_RESULT_ACCEPTED)
+        {
+
+        }
+        else
+        {
+
+        }
+
+        break;
+    }
+    default:
+        break;
+    }
 }
 
 QString Vehicle::severity2String(MAV_SEVERITY severity)
@@ -386,4 +420,22 @@ void Vehicle::setVehicleEncipher(bool enable)
     Fact* fact = ecsApp()->toolbox()->parameterManager()->getParameter(_compid, "ENcipher_enAES");
 
     fact->setRawValue(enable ? 1 : 0);
+}
+
+void Vehicle::setMode(unsigned int new_mode)
+{
+    mavlink_set_mode_t m;
+    m.base_mode = _base_mode;
+    m.custom_mode = new_mode;
+    m.target_system = 1;
+
+    mavlink_message_t message;
+    mavlink_msg_set_mode_encode(254,
+                                1,
+                                &message,
+                                &m);
+
+    uint8_t buff[MAVLINK_MAX_PACKET_LEN];
+    int len = mavlink_msg_to_send_buffer(buff, &message);
+    my_mavlink->sendData((const char*)buff, len);
 }

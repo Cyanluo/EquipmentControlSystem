@@ -54,6 +54,7 @@ void InitialConnectStateMachine::_stateRequestMission(StateMachine* stateMachine
 {
     InitialConnectStateMachine* connectMachine  = static_cast<InitialConnectStateMachine*>(stateMachine);
 
+    qDebug() << "RequestMission";
     connectMachine->_requestMission();
 }
 

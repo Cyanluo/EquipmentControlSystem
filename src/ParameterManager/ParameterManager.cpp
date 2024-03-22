@@ -65,6 +65,38 @@ void ParameterManager::refreshAllParameters(uint8_t componentId)
     qDebug() << "Request to refresh all parameters for component ID:" << what;
 }
 
+void ParameterManager::refreshParameter(int componentId, const QString& paramName)
+{
+    qDebug() << "refreshParameter - name:" << paramName << ")";
+
+    if (_waitingReadParamNameMap.contains(componentId)) {
+        if (_waitingReadParamNameMap[componentId].contains(paramName)) {
+            _waitingReadParamNameMap[componentId].remove(paramName);
+        } else {
+            _waitingReadParamNameBatchCount++;
+        }
+        _waitingReadParamNameMap[componentId][paramName] = 0;     // Add new wait entry and update retry count
+        _updateProgressBar();
+        qDebug() << "restarting _waitingParamTimeout";
+        _waitingParamTimeoutTimer.start();
+    } else {
+        qWarning() << "Internal error";
+    }
+
+    _readParameterRaw(componentId, paramName, -1);
+}
+
+bool ParameterManager::parameterExists(int componentId, const QString& paramName)
+{
+    bool ret = false;
+
+    if (_mapCompId2FactMap.contains(componentId)) {
+        ret = _mapCompId2FactMap[componentId].contains(paramName);
+    }
+
+    return ret;
+}
+
 void ParameterManager::mavlinkMessageReceived(mavlink_message_t message)
 {
     if (message.msgid == MAVLINK_MSG_ID_PARAM_VALUE) {
@@ -121,9 +153,6 @@ void ParameterManager::_handleParamValue(int componentId, QString parameterName,
         return;
     }
 
-    _initialRequestTimeoutTimer.stop();
-    _waitingParamTimeoutTimer.stop();
-
     // Update our total parameter counts
     if (!_paramCountMap.contains(componentId)) {
         _paramCountMap[componentId] = parameterCount;
@@ -151,6 +180,9 @@ void ParameterManager::_handleParamValue(int componentId, QString parameterName,
         return;
     }
 
+    _initialRequestTimeoutTimer.stop();
+    _waitingParamTimeoutTimer.stop();
+
     qDebug() << "_parameterUpdate" <<
         "name:" << parameterName <<
         "count:" << parameterCount <<
@@ -167,15 +199,6 @@ void ParameterManager::_handleParamValue(int componentId, QString parameterName,
     }
     _waitingReadParamNameMap[componentId].remove(parameterName);
     _waitingWriteParamNameMap[componentId].remove(parameterName);
-//    if (_waitingReadParamIndexMap[componentId].count()) {
-//        qCDebug(ParameterManagerVerbose2Log) << _logVehiclePrefix(componentId) << "_waitingReadParamIndexMap:" << _waitingReadParamIndexMap[componentId];
-//    }
-//    if (_waitingReadParamNameMap[componentId].count()) {
-//        qCDebug(ParameterManagerVerbose2Log) << _logVehiclePrefix(componentId) << "_waitingReadParamNameMap" << _waitingReadParamNameMap[componentId];
-//    }
-//    if (_waitingWriteParamNameMap[componentId].count()) {
-//        qCDebug(ParameterManagerVerbose2Log) << _logVehiclePrefix(componentId) << "_waitingWriteParamNameMap" << _waitingWriteParamNameMap[componentId];
-//    }
 
     // Track how many parameters we are still waiting for
 
@@ -230,6 +253,7 @@ void ParameterManager::_handleParamValue(int componentId, QString parameterName,
 
         fact = new Fact(componentId, parameterName, mavTypeToFactType(mavParamType), this);
         FactMetaData* factMetaData = _apmMetaData->getMetaDataForFact(parameterName, _vehicle->type(), fact->type());
+
         fact->setMetaData(factMetaData);
 
         _mapCompId2FactMap[componentId][parameterName] = fact;
@@ -626,4 +650,44 @@ void ParameterManager::_setLoadProgress(int componentId, double loadProgress)
         _loadProgress[componentId] = loadProgress;
         emit loadProgressChanged(componentId, static_cast<float>(loadProgress));
     }
+}
+
+QStringList ParameterManager::parameterNames(int componentId)
+{
+    QStringList names;
+
+    for(const QString &paramName: _mapCompId2FactMap[componentId].keys()) {
+        names << paramName;
+    }
+
+    return names;
+}
+
+QList<int> ParameterManager::componentIds(void)
+{
+    return _paramCountMap.keys();
+}
+
+void ParameterManager::writeParametersToStream(QTextStream& stream)
+{
+    stream << "# Onboard parameters for Vehicle " << _vehicle->sysid() << "\n";
+    stream << "#\n";
+
+    stream << "# Vehicle: " << _vehicle->type() << "\n";
+
+    stream << "#\n";
+    stream << "# Vehicle-Id Component-Id Name Value Type\n";
+
+    for (int componentId: _mapCompId2FactMap.keys()) {
+        for (const QString &paramName: _mapCompId2FactMap[componentId].keys()) {
+            Fact* fact = _mapCompId2FactMap[componentId][paramName];
+            if (fact) {
+                stream << _vehicle->sysid() << "\t" << componentId << "\t" << paramName << "\t" << fact->rawValueStringFullPrecision() << "\t" << QString("%1").arg(factTypeToMavType(fact->type())) << "\n";
+            } else {
+                qWarning() << "Internal error: missing fact";
+            }
+        }
+    }
+
+    stream.flush();
 }

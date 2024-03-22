@@ -20,20 +20,22 @@ SOURCES += \
         src/Encipher/AESEncipher.cpp \
         src/Fact/Fact.cpp \
         src/Fact/FactMetaData.cpp \
+        src/Fact/FactPanelController.cpp \
         src/GlobalQMLAcess.cpp \
         src/MissionManager/mavmission.cpp \
         src/MissionManager/missioncontroller.cpp \
         src/MissionManager/missionitem.cpp \
         src/MissionManager/planmanager.cpp \
         src/MissionManager/polygons.cpp \
-        src/MissionManager/qmlobjectlistmodel.cpp \
         src/ParameterManager/APMParameterMetaData.cpp \
+        src/ParameterManager/ParameterEditorController.cpp \
         src/ParameterManager/ParameterManager.cpp \
         src/gcs_mavlink/MAVLinkProtocol.cpp \
         src/gcs_mavlink/NetworkUDP.cpp \
         src/gcs_mavlink/gcs_mavlink.cpp \
         src/gcs_mavlink/seriallink.cpp \
         src/main.cpp \
+        src/qmlobjectlistmodel.cpp \
         src/vehicle/InitialConnectStateMachine.cpp \
         src/vehicle/StateMachine.cpp \
         src/vehicle/TBM_Trace.cpp \
@@ -62,20 +64,22 @@ HEADERS += \
     src/Encipher/staticqueue.h \
     src/Fact/Fact.h \
     src/Fact/FactMetaData.h \
+    src/Fact/FactPanelController.h \
     src/GlobalQMLAcess.h \
     src/MissionManager/mavmission.h \
     src/MissionManager/missioncontroller.h \
     src/MissionManager/missionitem.h \
     src/MissionManager/planmanager.h \
     src/MissionManager/polygons.h \
-    src/MissionManager/qmlobjectlistmodel.h \
     src/ParameterManager/APMParameterMetaData.h \
+    src/ParameterManager/ParameterEditorController.h \
     src/ParameterManager/ParameterManager.h \
     src/gcs_mavlink/AbstractIO.h \
     src/gcs_mavlink/MAVLinkProtocol.h \
     src/gcs_mavlink/NetworkUDP.h \
     src/gcs_mavlink/gcs_mavlink.h \
     src/gcs_mavlink/seriallink.h \
+    src/qmlobjectlistmodel.h \
     src/vehicle/InitialConnectStateMachine.h \
     src/vehicle/StateMachine.h \
     src/vehicle/TBM_Trace.h \

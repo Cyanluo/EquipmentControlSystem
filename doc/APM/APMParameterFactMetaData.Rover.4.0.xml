@@ -13368,4 +13368,12 @@
 <field name="UnitText">hertz</field>
 </param>
 </parameters>
+<parameters name="ENcipher_">
+<param humanName="AESEncipher enable/disable" name="ENcipher_enAES" documentation="Enable or disable AES encipher of mavlink" user="Standard">
+<values>
+<value code="0">Disabled</value>
+<value code="1">Enabled</value>
+</values>
+</param>
+</parameters>
 </libraries></paramfile>

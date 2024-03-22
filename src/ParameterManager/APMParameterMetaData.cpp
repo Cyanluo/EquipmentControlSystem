@@ -218,11 +218,11 @@ void APMParameterMetaData::loadParameterFactMetaDataFile(const QString& metaData
                 QString shortDescription = xml.attributes().value("humanName").toString();
                 QString longDescription = xml.attributes().value("documentation").toString();
 
-//                qDebug()    << "Found parameter name:" << name
-//                            << "short Desc:" << shortDescription
-//                            << "longDescription:" << longDescription
-//                            << "category: " << category
-//                            << "group: " << group;
+               // qDebug()    << "Found parameter name:" << name
+               //             << "short Desc:" << shortDescription
+               //             << "longDescription:" << longDescription
+               //             << "category: " << category
+               //             << "group: " << group;
 
                 Q_ASSERT(!rawMetaData);
                 if (_vehicleTypeToParametersMap[currentCategory].contains(name)) {
@@ -261,7 +261,7 @@ void APMParameterMetaData::loadParameterFactMetaDataFile(const QString& metaData
                 badMetaData = false;
                 xmlState.pop();
             } else if (elementName == "parameters") {
-                correctGroupMemberships(_vehicleTypeToParametersMap[currentCategory], groupMembers);
+                // correctGroupMemberships(_vehicleTypeToParametersMap[currentCategory], groupMembers);
                 groupMembers.clear();
                 xmlState.pop();
             } else if (elementName == "vehicles") {

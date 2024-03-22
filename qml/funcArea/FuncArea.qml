@@ -3,6 +3,7 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 
 import EquitmentControl     1.0
+import "../Controls"
 
 Rectangle {
     border.width: 1
@@ -45,6 +46,7 @@ Rectangle {
             ScrollView{
                 anchors.fill: parent
                 GridLayout{
+                    id: funAreaGridLayout
                     columns: 3
                     columnSpacing: 10
                     rowSpacing: 20
@@ -89,6 +91,60 @@ Rectangle {
                             isEncipher = EquitmentControl.linkManager.isGCSEncipher()
                         }
                     }
+                    Button{
+                        id:parameterDialog
+                        width: 100
+                        height: 80
+                        text: qsTr('参数设置')
+                        onClicked: {
+                            parameterDia.open()
+                        }
+                    }
+                }
+
+                Row {
+                    anchors.top: funAreaGridLayout.bottom
+                    anchors.topMargin: 20
+
+                    ComboBox{
+                        id: modeSetComboBox
+                        height: 50
+                        width: 140
+                        textRole: "text"
+                        valueRole: "cost"
+                        model: ListModel {
+                            ListElement { text: "MANUAL";       cost: 0 }
+                            ListElement { text: "ACRO";         cost: 1 }
+                            ListElement { text: "STEERING";     cost: 3 }
+                            ListElement { text: "HOLD";         cost: 4 }
+                            ListElement { text: "LOITER";       cost: 5 }
+                            ListElement { text: "FOLLOW";       cost: 6 }
+                            ListElement { text: "SIMPLE";       cost: 7 }
+                            ListElement { text: "AUTO";         cost: 10}
+                            ListElement { text: "RTL";          cost: 11}
+                            ListElement { text: "SMART_RTL";    cost: 12}
+                            ListElement { text: "GUIDED";       cost: 15}
+                            ListElement { text: "INITIALISING"; cost: 16}
+                            ListElement { text: "TBM" ;         cost: 17}
+                            ListElement { text: "EXCAVATOR";    cost: 18}
+                        }
+                        Component.onCompleted: {
+                            currentIndex = 0
+                        }
+                        onActivated: {
+
+                        }
+                    }
+
+                    Button{
+                        id: modeSetBun
+                        width: 100
+                        height: 50
+                        text: qsTr('确定')
+                        onClicked: {
+                            activeVehicle.setMode(modeSetComboBox.currentValue)
+                        }
+                    }
                 }
             }
         }
@@ -96,7 +152,6 @@ Rectangle {
             id: messageTab
             Flickable {
                 id: flick
-
                 anchors.fill: parent
                 contentWidth: edit.paintedWidth
                 contentHeight: edit.paintedHeight
@@ -120,6 +175,7 @@ Rectangle {
                     focus: true
                     wrapMode: TextEdit.Wrap
                     onCursorRectangleChanged: flick.ensureVisible(cursorRectangle)
+                    y: parent.contentHeight - parent.height
                 }
             }
 
@@ -127,6 +183,7 @@ Rectangle {
                 target: activeVehicle
                 function onReceiveMavMsg(msg) {
                     edit.append(qsTr(msg))
+
                 }
             }
         }
@@ -136,5 +193,9 @@ Rectangle {
         Item {
             id: logManageTab
         }
+    }
+
+    ParameterEditor {
+        id: parameterDia
     }
 }

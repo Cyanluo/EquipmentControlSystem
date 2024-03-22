@@ -3,7 +3,7 @@
 
 #include <QObject>
 #include <QWidget>
-#include "qmlobjectlistmodel.h"
+#include "src/qmlobjectlistmodel.h"
 #include "ardupilotmega/mavlink.h"
 #include "src/vehicle/vehicle.h"
 #include "src/MissionManager/mavmission.h"

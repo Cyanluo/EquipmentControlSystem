@@ -1,6 +1,6 @@
 ﻿#ifndef POLYGONS_H
 #define POLYGONS_H
-#include "qmlobjectlistmodel.h"
+#include "src/qmlobjectlistmodel.h"
 #include <QObject>
 #include "src/MissionManager/missionitem.h"
 #include "src/MissionManager/mavmission.h"

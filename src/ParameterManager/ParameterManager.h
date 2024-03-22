@@ -7,14 +7,24 @@
 #include <QMap>
 
 class APMParameterMetaData;
+class ParameterEditorController;
 
 class ParameterManager : public ECSTool
 {
     Q_OBJECT
+
+    friend class ParameterEditorController;
+
 public:
     ParameterManager(ECSApplication* app, ECSToolbox* toolbox);
 
     void refreshAllParameters(uint8_t componentID = MAV_COMP_ID_ALL);
+    void refreshParameter(int componentId, const QString& paramName);
+    bool parameterExists(int componentId, const QString& paramName);
+    QStringList parameterNames(int componentId);
+    QList<int> componentIds(void);
+    void writeParametersToStream(QTextStream& stream);
+
     void mavlinkMessageReceived(mavlink_message_t message);
 
     bool isInitialLoadComplete() { return _initialLoadComplete; }

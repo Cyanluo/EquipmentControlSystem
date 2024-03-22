@@ -27,7 +27,6 @@ Window {
             height: 120
             color: "black"
 
-
             Canvas{
                 id:leftTop
                 anchors.fill: parent

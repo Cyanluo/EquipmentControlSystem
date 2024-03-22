@@ -12,5 +12,12 @@
         <file>qml/toolbar/NetTool.qml</file>
         <file>qml/traceDisplay/TraceDisplayPro.qml</file>
         <file>qml/funcArea/FuncArea.qml</file>
+        <file>qml/Controls/ParameterEditor.qml</file>
+        <file>qml/Controls/ECSFlickableHorizontalIndicator.qml</file>
+        <file>qml/Controls/ECSFlickableVerticalIndicator.qml</file>
+        <file>qml/Controls/ECSFlickable.qml</file>
+        <file>qml/Controls/SectionHeader.qml</file>
+        <file>qml/Controls/ECSListView.qml</file>
+        <file>qml/Controls/ParameterEditorPopup.qml</file>
     </qresource>
 </RCC>

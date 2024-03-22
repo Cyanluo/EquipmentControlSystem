@@ -14,6 +14,7 @@ void TBM_Trace::setCoordinate_x(const float x)
     }
     coordinate_x = x;
     emit coordinate_xChanged();
+    emit coordinateChanged();
 }
 
 void TBM_Trace::setCoordinate_y(const float y)
