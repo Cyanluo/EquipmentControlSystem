@@ -27,7 +27,7 @@ void AESEncipher::init(const uint8_t *iv, const uint8_t *key)
         memcpy(_info.aesKey, key, ENCRYPT_AES_KEY_LEN);
     }
 
-    _enAESEncipher = true;
+    _enAESEncipher = false;
 }
 
 AESEncipher::AESEncipher()

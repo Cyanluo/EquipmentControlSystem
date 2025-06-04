@@ -1,6 +1,7 @@
 ﻿import QtQuick 2.15
 import QtQuick.Window 2.15
 import QtQuick.Controls 2.4
+import QtQuick.Layouts 1.3
 
 Rectangle {
     id: root
@@ -8,111 +9,166 @@ Rectangle {
     visible: true
     color: "white"
 
-    property var rdHeaderTrace:         [ ]
-    property var rdhdconnecttrace:      [ ]
-    property real connectRecLen:        0
-    property real rdHdPreviousX :       0
-    property real rdHdPreviousY :       0
-    property real rdHdCurrentX :        0
-    property real rdHdCurrentY :        0
-    property real angle:                0
-    property real timerInterval:        400
+    property int status : 0
 
-    function creatObj(){
-        var obj = tracePoint.createObject(parent,{x:tbmPos.coordinate_x, y:tbmPos.coordinate_y})
-        return obj;
+    function addPathPoint(p_x, p_y){
+        var str_test = "import QtQuick 2.15;PathCurve {x:%1; y:%2}".arg(p_x).arg(p_y)
+
+        var pathLine = Qt.createQmlObject(str_test, canvas)
+
+        trace_path.pathElements.push(pathLine)
+        trace_path.startX = trace_path.pathElements[0].x
+        trace_path.startY = trace_path.pathElements[0].y
+
+        canvas.requestPaint()
     }
 
-    function creatConnectObj(){
-        var obj = connectRec.createObject(parent,{x:(rdHdPreviousX + rdHdCurrentX - connectRecLen)/2 + 10, y:(rdHdPreviousY + rdHdCurrentY)/2})
-        return obj;
-    }
+    function deletePathPoint(reserve_num){
+        trace_path.pathElements = Array.from(trace_path.pathElements).filter((m, i) => i >= trace_path.pathElements.length-reserve_num)
 
-    function addPoint(){
-        if(rdhdconnecttrace.length == 0){
-            rdHdCurrentX = tbmPos.coordinate_x
-            rdHdCurrentY = tbmPos.coordinate_y
-        }
-        else{
-            rdHdPreviousX = rdHdCurrentX
-            rdHdPreviousY = rdHdCurrentY
-            rdHdCurrentX = tbmPos.coordinate_x
-            rdHdCurrentY = tbmPos.coordinate_y
-            connectRecLen = calLength()
-            angle = rotangle()
-            rdhdconnecttrace.push(creatConnectObj())
-            rdhdconnecttrace[rdhdconnecttrace.length-1].width = connectRecLen
-            rdhdconnecttrace[rdhdconnecttrace.length-1].rotation = angle
-        }
-        rdHeaderTrace.push(creatObj())
-    }
-
-    function deleteOne() {
-        if(rdHeaderTrace.length >= 2) {
-            rdHeaderTrace.shift().destroy()
+        if( trace_path.pathElements.length > 0 )
+        {
+            trace_path.startX = trace_path.pathElements[0].x
+            trace_path.startY = trace_path.pathElements[0].y
         }
 
-        if(rdhdconnecttrace.length >= 2) {
-            rdhdconnecttrace.shift().destroy()
-        }
+        canvas.requestPaint()
     }
 
-    function calLength(){
-        return Math.sqrt((rdHdPreviousX - rdHdCurrentX) * (rdHdPreviousX - rdHdCurrentX) + (rdHdPreviousY - rdHdCurrentY) * (rdHdPreviousY - rdHdCurrentY))
+    Path {
+        id: trace_path
     }
 
-    function rotangle(){
-        if(rdHdCurrentY == rdHdPreviousY)
-            return 0
-        else
-            return (Math.atan((rdHdCurrentY - rdHdPreviousY) / (rdHdCurrentX - rdHdPreviousX))) * 180 / Math.PI
-    }
+    Canvas
+    {
+        id: canvas
+        anchors.fill: parent
+        smooth: true
 
-    function reset(){
-        timerInterval = 600
-        rdHeaderTrace.clear()
-        rdhdconnecttrace.clear()
-    }
+        onPaint:
+        {
+            var context = canvas.getContext("2d")
+            context.clearRect(0, 0, width, height)
+            context.strokeStyle = "blue"
+            context.lineWidth = 3
+            context.path = trace_path
+            context.stroke()
 
-    Component{
-        id:tracePoint
-        Rectangle{
-            id:rdhdPoint
-            height:20
-            width:20
-            radius: 10
-            z:2
-            color:"orange"
+            context.fillStyle = "orange"
+            context.beginPath()
+            context.rect(trace_path.pathElements[trace_path.pathElements.length-1].x-10, trace_path.pathElements[trace_path.pathElements.length-1].y-10, 20, 20)
+            context.fill()
         }
     }
 
-    Component{
-        id:connectRec
-        Rectangle{
-            id:rdhdLine
-            height: 20
-            width: 20
-            radius: 10
-            color: "#fee140"
-            z:1
-            rotation: 0
+    Button{
+        id: reset_btn
+        anchors.bottom: canvas.bottom
+        anchors.right: status_btn.left
+        anchors.bottomMargin: 20
+        anchors.rightMargin: 10
+
+        width:70
+        height:30
+
+        text: qsTr("清除")
+        background: Rectangle{
+            color: "white"
+            anchors.fill: parent
+            border.width: 1
+            border.color: "black"
+        }
+        visible: status === 0
+
+        onClicked: {
+            deletePathPoint(1)
+        }
+    }
+
+    TextField{
+        id: disappeartime_text
+        selectByMouse: true
+        text: "600"
+        font.pixelSize: 18
+        Layout.preferredWidth: parent.width/2
+        anchors.bottom: canvas.bottom
+        anchors.right: status_btn.left
+        anchors.bottomMargin: 20
+        anchors.rightMargin: 10
+
+        width:70
+        height:30
+
+        background: Rectangle{
+            anchors.fill: parent
+            color: "white"
+            border.width: 1
+            border.color: "black"
+        }
+
+        validator: RegExpValidator {
+            regExp: /^-?\d+$/
+        }
+
+        visible: status === 1
+    }
+
+    Button{
+        id: status_btn
+
+        anchors.bottom: canvas.bottom
+        anchors.right: canvas.right
+        anchors.bottomMargin: 20
+        anchors.rightMargin: 10
+
+        width:100
+        height:30
+
+        background: Rectangle{
+            color: "white"
+            anchors.fill: parent
+            border.width: 1
+            border.color: "black"
+        }
+        text: {
+            switch(status)
+            {
+            case 0:
+                return qsTr("手动清除")
+            case 1:
+                return qsTr("自动清除")
+            }
+        }
+
+        onClicked: {
+            switch(status)
+            {
+            case 0:
+                disappeartimer.running = true
+                status = 1
+                break;
+            case 1:
+                disappeartimer.running = false
+                status = 0
+                break;
+            }
         }
     }
 
     Timer{
-        id:disappeartimer
-        interval: timerInterval
+        id: disappeartimer
+        interval: Number(disappeartime_text.text)
         repeat: true
-        running: true
+        running: status === 1
         onTriggered: {
-            deleteOne()
+            deletePathPoint(12)
         }
     }
 
     Connections{
         target: tbmPos
         function onCoordinateChanged() {
-            addPoint()
+            addPathPoint(tbmPos.coordinate_x, tbmPos.coordinate_y)
         }
     }
 }

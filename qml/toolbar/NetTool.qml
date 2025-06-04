@@ -122,7 +122,7 @@ Rectangle{
                 TextField{
                     id: serialPortText
                     selectByMouse: true
-                    text: "/dev/pts/4"
+                    text: "/dev/ttyACM0"
                     font.pixelSize: 18
                     Layout.preferredWidth: parent.width/2
                     background: Rectangle{

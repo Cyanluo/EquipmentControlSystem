@@ -73,7 +73,8 @@ void Vehicle::_mavlinkMessageReceived(mavlink_message_t msg)
         handlePowerStatus(msg);
         break;
 
-    case MAVLINK_MSG_ID_TBM_POSITIONAL_PARAMETERS:
+    case MAVLINK_MSG_ID_RANGEFINDER:
+    // case MAVLINK_MSG_ID_TBM_POSITIONAL_PARAMETERS:
         handleTBM_Positional_Parameters(msg);
         break;
 
@@ -145,11 +146,16 @@ void Vehicle::handlePowerStatus(mavlink_message_t& msg)
 
 void Vehicle::handleTBM_Positional_Parameters(mavlink_message_t& msg)
 {
-    mavlink_tbm_positional_parameters_t tbm_pp;
-    mavlink_msg_tbm_positional_parameters_decode(&msg, &tbm_pp);
+    // mavlink_tbm_positional_parameters_t tbm_pp;
+    // mavlink_msg_tbm_positional_parameters_decode(&msg, &tbm_pp);
 
-    _tbmTrace->setCoordinate_x(tbm_pp.rdheader_xb*planScreenW/2 + planScreenW/2);
-    _tbmTrace->setCoordinate_y(planScreenH - tbm_pp.rdheader_yb*planScreenH);
+    mavlink_rangefinder_t tbm_pp;
+    mavlink_msg_rangefinder_decode(&msg, &tbm_pp);
+    _tbmTrace->setCoordinate_x(tbm_pp.distance*planScreenW/2 + planScreenW/2);
+    _tbmTrace->setCoordinate_y(planScreenH - tbm_pp.voltage*planScreenH);
+
+    // _tbmTrace->setCoordinate_x(tbm_pp.rdheader_xb*planScreenW/2 + planScreenW/2);
+    // _tbmTrace->setCoordinate_y(planScreenH - tbm_pp.rdheader_yb*planScreenH);
 }
 
 void Vehicle::handleHeartBeatMessage(mavlink_message_t& msg)

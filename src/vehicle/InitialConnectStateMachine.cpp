@@ -9,7 +9,7 @@
 const StateMachine::StateFn InitialConnectStateMachine::_rgStates[] = {
     InitialConnectStateMachine::_stateRequestCompInfo,
     InitialConnectStateMachine::_stateRequestParameters,
-    InitialConnectStateMachine::_stateRequestMission,
+    // InitialConnectStateMachine::_stateRequestMission,
 };
 
 const int InitialConnectStateMachine::_cStates = sizeof(InitialConnectStateMachine::_rgStates) / sizeof(InitialConnectStateMachine::_rgStates[0]);
